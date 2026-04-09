@@ -88,6 +88,15 @@ export default function BookingFlow({ company, services, professionals }: Bookin
       setError('Preencha todos os campos obrigatórios.')
       return
     }
+    const phoneClean = clientPhone.replace(/\D/g, '')
+    if (phoneClean.length < 10 || phoneClean.length > 11) {
+      setError('Telefone inválido. Use o formato (11) 99999-9999.')
+      return
+    }
+    if (clientEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clientEmail)) {
+      setError('Email inválido.')
+      return
+    }
     setLoading(true)
     setError('')
     try {
@@ -177,7 +186,7 @@ export default function BookingFlow({ company, services, professionals }: Bookin
               color: i === step ? '#fff' : i < step ? '#22c55e' : 'hsl(215,14%,45%)',
               fontSize: 12, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>{i < step ? '✓' : i + 1}</div>
-            <span style={{ fontSize: 12, color: i === step ? 'hsl(28,98%,60%)' : 'hsl(215,14%,40%)', display: i === STEPS.length - 1 ? 'none' : 'block', marginRight: '0.125rem' }}></span>
+            {i < STEPS.length - 1 && <span style={{ fontSize: 12, color: 'hsl(215,14%,35%)' }}>›</span>}
           </div>
         ))}
       </div>

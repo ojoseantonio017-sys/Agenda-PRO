@@ -29,8 +29,7 @@ const statusLabels: Record<string, string> = {
   concluido: 'Concluído',
 }
 
-// Mock bar chart (last 7 days)
-const weekDays = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
+const DAY_LABELS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -76,9 +75,26 @@ export default async function DashboardPage() {
     return sum + (price as number)
   }, 0 as number)
 
-  // Bar chart data (mock for demo)
-  const barData = [12, 8, 15, 6, 18, 10, 7]
-  const maxBar = Math.max(...barData)
+  // Bar chart — últimos 7 dias com dados reais
+  const last7Days = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date()
+    d.setDate(d.getDate() - 6 + i)
+    return d.toISOString().split('T')[0]
+  })
+  const { data: weeklyAppts } = await supabase
+    .from('appointments')
+    .select('date')
+    .eq('company_id', companyId ?? '')
+    .gte('date', last7Days[0])
+    .lte('date', today)
+
+  const dayCountMap: Record<string, number> = {}
+  for (const a of weeklyAppts ?? []) {
+    dayCountMap[a.date] = (dayCountMap[a.date] ?? 0) + 1
+  }
+  const barData = last7Days.map(d => dayCountMap[d] ?? 0)
+  const barLabels = last7Days.map(d => DAY_LABELS[new Date(d + 'T12:00:00').getDay()])
+  const maxBar = Math.max(...barData, 1)
 
   return (
     <div>
@@ -159,7 +175,7 @@ export default async function DashboardPage() {
           <div style={{ display: 'flex', alignItems: 'flex-end', gap: '0.5rem', height: 140 }}>
             {barData.map((val, i) => (
               <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', height: '100%', justifyContent: 'flex-end' }}>
-                <span style={{ fontSize: 11, color: 'hsl(215,14%,50%)' }}>{val}</span>
+                {val > 0 && <span style={{ fontSize: 11, color: 'hsl(215,14%,50%)' }}>{val}</span>}
                 <div
                   style={{
                     width: '100%',
@@ -169,7 +185,7 @@ export default async function DashboardPage() {
                     minHeight: 4,
                   }}
                 />
-                <span style={{ fontSize: 11, color: 'hsl(215,14%,45%)' }}>{weekDays[i]}</span>
+                <span style={{ fontSize: 11, color: 'hsl(215,14%,45%)' }}>{barLabels[i]}</span>
               </div>
             ))}
           </div>

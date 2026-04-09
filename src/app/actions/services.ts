@@ -3,58 +3,93 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 
-export async function createService(formData: FormData) {
+async function getCompanyId() {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Não autenticado')
+  const { data: userData } = await supabase
+    .from('users')
+    .select('company_id')
+    .eq('id', user.id)
+    .single()
+  if (!userData?.company_id) throw new Error('Empresa não encontrada')
+  return { supabase, companyId: userData.company_id as string }
+}
 
-  const data = {
-    company_id: formData.get('company_id') as string,
-    name: formData.get('name') as string,
-    description: (formData.get('description') as string) || null,
-    duration_minutes: parseInt(formData.get('duration_minutes') as string, 10),
-    price: parseInt(formData.get('price') as string, 10),
+export async function createService(formData: FormData) {
+  const { supabase, companyId } = await getCompanyId()
+
+  const name = (formData.get('name') as string)?.trim()
+  const description = (formData.get('description') as string)?.trim() || null
+  const duration_minutes = parseInt(formData.get('duration_minutes') as string, 10)
+  const price = parseInt(formData.get('price') as string, 10)
+
+  if (!name) throw new Error('Nome do serviço é obrigatório.')
+  if (isNaN(duration_minutes) || duration_minutes <= 0) throw new Error('Duração deve ser maior que zero.')
+  if (isNaN(price) || price < 0) throw new Error('Preço inválido.')
+
+  const { error } = await supabase.from('services').insert({
+    company_id: companyId,
+    name,
+    description,
+    duration_minutes,
+    price,
     active: true,
-  }
+  })
 
-  if (!data.name || !data.company_id || isNaN(data.duration_minutes) || isNaN(data.price)) {
-    throw new Error('Dados inválidos para criação do serviço.')
-  }
-
-  const { error } = await supabase.from('services').insert(data)
-
-  if (error) {
-    throw new Error(`Erro ao criar serviço: ${error.message}`)
-  }
+  if (error) throw new Error(`Erro ao criar serviço: ${error.message}`)
 
   revalidatePath('/servicos')
 }
 
 export async function updateService(id: string, formData: FormData) {
-  const supabase = await createClient()
+  const { supabase, companyId } = await getCompanyId()
 
-  const data = {
-    name: formData.get('name') as string,
-    description: (formData.get('description') as string) || null,
-    duration_minutes: parseInt(formData.get('duration_minutes') as string, 10),
-    price: parseInt(formData.get('price') as string, 10),
-  }
+  // Verifica se o serviço pertence à empresa do usuário
+  const { data: existing } = await supabase
+    .from('services')
+    .select('id')
+    .eq('id', id)
+    .eq('company_id', companyId)
+    .single()
 
-  const { error } = await supabase.from('services').update(data).eq('id', id)
+  if (!existing) throw new Error('Serviço não encontrado.')
 
-  if (error) {
-    throw new Error(`Erro ao atualizar serviço: ${error.message}`)
-  }
+  const name = (formData.get('name') as string)?.trim()
+  const duration_minutes = parseInt(formData.get('duration_minutes') as string, 10)
+  const price = parseInt(formData.get('price') as string, 10)
+
+  if (!name) throw new Error('Nome do serviço é obrigatório.')
+  if (isNaN(duration_minutes) || duration_minutes <= 0) throw new Error('Duração deve ser maior que zero.')
+  if (isNaN(price) || price < 0) throw new Error('Preço inválido.')
+
+  const { error } = await supabase.from('services').update({
+    name,
+    description: (formData.get('description') as string)?.trim() || null,
+    duration_minutes,
+    price,
+  }).eq('id', id)
+
+  if (error) throw new Error(`Erro ao atualizar serviço: ${error.message}`)
 
   revalidatePath('/servicos')
 }
 
 export async function toggleService(id: string, active: boolean) {
-  const supabase = await createClient()
+  const { supabase, companyId } = await getCompanyId()
+
+  // Verifica se o serviço pertence à empresa do usuário
+  const { data: existing } = await supabase
+    .from('services')
+    .select('id')
+    .eq('id', id)
+    .eq('company_id', companyId)
+    .single()
+
+  if (!existing) throw new Error('Serviço não encontrado.')
 
   const { error } = await supabase.from('services').update({ active }).eq('id', id)
-
-  if (error) {
-    throw new Error(`Erro ao atualizar serviço: ${error.message}`)
-  }
+  if (error) throw new Error(`Erro ao atualizar serviço: ${error.message}`)
 
   revalidatePath('/servicos')
 }

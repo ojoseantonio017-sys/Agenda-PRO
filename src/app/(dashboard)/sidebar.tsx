@@ -5,13 +5,9 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard,
-  Calendar,
   CalendarCheck,
   Scissors,
   Users,
-  UserCircle,
-  BarChart3,
-  Settings,
   LogOut,
   Menu,
   X,
@@ -20,13 +16,9 @@ import { logout } from '@/app/actions/auth'
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/agenda', label: 'Agenda', icon: Calendar },
   { href: '/agendamentos', label: 'Agendamentos', icon: CalendarCheck },
   { href: '/servicos', label: 'Serviços', icon: Scissors },
   { href: '/profissionais', label: 'Profissionais', icon: Users },
-  { href: '/clientes', label: 'Clientes', icon: UserCircle },
-  { href: '/relatorios', label: 'Relatórios', icon: BarChart3 },
-  { href: '/configuracoes', label: 'Configurações', icon: Settings },
 ]
 
 export default function DashboardSidebar() {
@@ -45,7 +37,7 @@ export default function DashboardSidebar() {
       <nav style={{ flex: 1, padding: '1rem 0.75rem', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
         {navItems.map((item) => {
           const Icon = item.icon
-          const active = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))
+          const active = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href + '/'))
           return (
             <Link
               key={item.href}

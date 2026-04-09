@@ -3,17 +3,27 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 
-export async function createProfessional(formData: FormData) {
+async function getCompanyId() {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Não autenticado')
+  const { data: userData } = await supabase
+    .from('users')
+    .select('company_id')
+    .eq('id', user.id)
+    .single()
+  if (!userData?.company_id) throw new Error('Empresa não encontrada')
+  return { supabase, companyId: userData.company_id as string }
+}
 
-  const companyId = formData.get('company_id') as string
-  const name = formData.get('name') as string
-  const bio = (formData.get('bio') as string) || null
-  const avatar_url = (formData.get('avatar_url') as string) || null
+export async function createProfessional(formData: FormData) {
+  const { supabase, companyId } = await getCompanyId()
 
-  if (!name || !companyId) {
-    throw new Error('Nome e empresa são obrigatórios.')
-  }
+  const name = (formData.get('name') as string)?.trim()
+  const bio = (formData.get('bio') as string)?.trim() || null
+  const avatar_url = (formData.get('avatar_url') as string)?.trim() || null
+
+  if (!name) throw new Error('Nome é obrigatório.')
 
   const { data: professional, error } = await supabase
     .from('professionals')
@@ -21,11 +31,9 @@ export async function createProfessional(formData: FormData) {
     .select()
     .single()
 
-  if (error) {
-    throw new Error(`Erro ao criar profissional: ${error.message}`)
-  }
+  if (error) throw new Error(`Erro ao criar profissional: ${error.message}`)
 
-  // Create working hours (only if both start and end are filled)
+  // Criar horários de trabalho (apenas se início e fim forem preenchidos)
   const workingHours = []
   for (let day = 0; day <= 6; day++) {
     const start = formData.get(`start_${day}`) as string
@@ -43,40 +51,54 @@ export async function createProfessional(formData: FormData) {
 
   if (workingHours.length > 0) {
     const { error: whError } = await supabase.from('working_hours').insert(workingHours)
-    if (whError) {
-      console.error('Erro ao criar horários de trabalho:', whError.message)
-    }
+    if (whError) throw new Error(`Erro ao criar horários de trabalho: ${whError.message}`)
   }
 
   revalidatePath('/profissionais')
 }
 
 export async function updateProfessional(id: string, formData: FormData) {
-  const supabase = await createClient()
+  const { supabase, companyId } = await getCompanyId()
+
+  // Verifica se o profissional pertence à empresa do usuário
+  const { data: existing } = await supabase
+    .from('professionals')
+    .select('id')
+    .eq('id', id)
+    .eq('company_id', companyId)
+    .single()
+
+  if (!existing) throw new Error('Profissional não encontrado.')
 
   const data = {
-    name: formData.get('name') as string,
-    bio: (formData.get('bio') as string) || null,
-    avatar_url: (formData.get('avatar_url') as string) || null,
+    name: (formData.get('name') as string)?.trim(),
+    bio: (formData.get('bio') as string)?.trim() || null,
+    avatar_url: (formData.get('avatar_url') as string)?.trim() || null,
   }
+
+  if (!data.name) throw new Error('Nome é obrigatório.')
 
   const { error } = await supabase.from('professionals').update(data).eq('id', id)
-
-  if (error) {
-    throw new Error(`Erro ao atualizar profissional: ${error.message}`)
-  }
+  if (error) throw new Error(`Erro ao atualizar profissional: ${error.message}`)
 
   revalidatePath('/profissionais')
 }
 
 export async function toggleProfessional(id: string, active: boolean) {
-  const supabase = await createClient()
+  const { supabase, companyId } = await getCompanyId()
+
+  // Verifica se o profissional pertence à empresa do usuário
+  const { data: existing } = await supabase
+    .from('professionals')
+    .select('id')
+    .eq('id', id)
+    .eq('company_id', companyId)
+    .single()
+
+  if (!existing) throw new Error('Profissional não encontrado.')
 
   const { error } = await supabase.from('professionals').update({ active }).eq('id', id)
-
-  if (error) {
-    throw new Error(`Erro ao atualizar profissional: ${error.message}`)
-  }
+  if (error) throw new Error(`Erro ao atualizar profissional: ${error.message}`)
 
   revalidatePath('/profissionais')
 }
