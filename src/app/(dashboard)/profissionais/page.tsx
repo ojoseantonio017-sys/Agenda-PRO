@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { createProfessional, toggleProfessional } from '@/app/actions/professionals'
-import { Plus, UserCircle } from 'lucide-react'
+import { Plus, UserCircle, Clock } from 'lucide-react'
 
 const daysOfWeek = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
 
@@ -18,22 +18,26 @@ export default async function ProfissionaisPage() {
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.75rem' }}>
-        <div>
-          <h1 style={{ fontSize: 22, fontWeight: 800, color: 'hsl(215,20%,92%)', marginBottom: '0.25rem' }}>Profissionais</h1>
-          <p style={{ color: 'hsl(215,14%,50%)', fontSize: 14 }}>Gerencie a equipe e os horários de trabalho.</p>
-        </div>
+      {/* Header */}
+      <div style={{ marginBottom: '1.75rem' }}>
+        <h1 style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.02em', marginBottom: '0.25rem' }}>Profissionais</h1>
+        <p style={{ color: 'var(--fg-muted)', fontSize: 14 }}>Gerencie a equipe e os horários de trabalho.</p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '1.5rem', alignItems: 'start' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '1.5rem', alignItems: 'start' }}>
+
         {/* List */}
         <div>
           {(!professionals || professionals.length === 0) ? (
-            <div style={{ background: 'hsl(222,20%,7%)', border: '1px solid hsl(222,20%,12%)', borderRadius: 12, padding: '3rem', textAlign: 'center' }}>
-              <p style={{ color: 'hsl(215,14%,45%)', fontSize: 14 }}>Nenhum profissional cadastrado. Adicione o primeiro.</p>
+            <div className="card" style={{ padding: '3.5rem', textAlign: 'center' }}>
+              <div style={{ width: 52, height: 52, background: 'var(--bg-3)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
+                <UserCircle size={26} color="var(--fg-subtle)" />
+              </div>
+              <p style={{ color: 'var(--fg-muted)', fontSize: 14, fontWeight: 500 }}>Nenhum profissional cadastrado.</p>
+              <p style={{ color: 'var(--fg-subtle)', fontSize: 13, marginTop: '0.375rem' }}>Adicione o primeiro no formulário ao lado.</p>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               {professionals.map((prof: {
                 id: string
                 name: string
@@ -44,46 +48,60 @@ export default async function ProfissionaisPage() {
               }) => {
                 const activeHours = (prof.working_hours ?? []).filter((h) => h.active)
                 return (
-                  <div key={prof.id} style={{ background: 'hsl(222,20%,7%)', border: '1px solid hsl(222,20%,12%)', borderRadius: 12, padding: '1.25rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', marginBottom: '1rem' }}>
-                      <div style={{ width: 48, height: 48, background: 'rgba(255,120,32,0.12)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <div key={prof.id} className="card" style={{ padding: '1.375rem', opacity: prof.active ? 1 : 0.6 }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', marginBottom: activeHours.length > 0 ? '1rem' : 0 }}>
+                      {/* Avatar */}
+                      <div style={{ width: 48, height: 48, background: prof.active ? 'rgba(255,120,32,0.1)' : 'var(--bg-3)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
                         {prof.avatar_url ? (
                           // eslint-disable-next-line @next/next/no-img-element
-                          <img src={prof.avatar_url} alt={prof.name} style={{ width: 48, height: 48, borderRadius: '50%', objectFit: 'cover' }} />
+                          <img src={prof.avatar_url} alt={prof.name} style={{ width: 48, height: 48, objectFit: 'cover' }} />
                         ) : (
-                          <UserCircle size={28} color="hsl(28,98%,55%)" />
+                          <span style={{ fontSize: 18, fontWeight: 800, color: prof.active ? 'var(--primary)' : 'var(--fg-subtle)' }}>
+                            {prof.name.charAt(0).toUpperCase()}
+                          </span>
                         )}
                       </div>
-                      <div style={{ flex: 1 }}>
+
+                      {/* Info */}
+                      <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-                          <h3 style={{ fontSize: 15, fontWeight: 700, color: 'hsl(215,20%,90%)' }}>{prof.name}</h3>
+                          <h3 style={{ fontSize: 15, fontWeight: 700, color: 'var(--fg)', letterSpacing: '-0.01em' }}>{prof.name}</h3>
                           {!prof.active && (
-                            <span style={{ fontSize: 10, fontWeight: 700, padding: '0.15rem 0.5rem', borderRadius: 4, background: 'rgba(107,114,128,0.2)', color: '#9ca3af' }}>INATIVO</span>
+                            <span className="badge" style={{ background: 'rgba(107,114,128,0.15)', color: '#6b7280' }}>Inativo</span>
                           )}
                         </div>
-                        {prof.bio && <p style={{ fontSize: 13, color: 'hsl(215,14%,50%)' }}>{prof.bio}</p>}
+                        {prof.bio && (
+                          <p style={{ fontSize: 13, color: 'var(--fg-muted)', lineHeight: 1.5 }}>{prof.bio}</p>
+                        )}
+                        {activeHours.length > 0 && (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginTop: '0.375rem', fontSize: 12, color: 'var(--fg-subtle)' }}>
+                            <Clock size={12} />
+                            {activeHours.length} dia{activeHours.length !== 1 ? 's' : ''} configurado{activeHours.length !== 1 ? 's' : ''}
+                          </div>
+                        )}
                       </div>
+
+                      {/* Toggle */}
                       <form action={toggleProfessional.bind(null, prof.id, !prof.active)}>
-                        <button
-                          type="submit"
-                          style={{
-                            fontSize: 12, fontWeight: 600, padding: '0.4rem 0.875rem', borderRadius: 7, border: 'none',
-                            background: prof.active ? 'rgba(239,68,68,0.12)' : 'rgba(34,197,94,0.12)',
-                            color: prof.active ? '#ef4444' : '#22c55e', cursor: 'pointer',
-                          }}
-                        >
+                        <button type="submit" style={{
+                          fontSize: 12, fontWeight: 700, padding: '0.4rem 0.875rem', borderRadius: 7, border: 'none',
+                          background: prof.active ? 'rgba(239,68,68,0.1)' : 'rgba(34,197,94,0.1)',
+                          color: prof.active ? '#ef4444' : '#22c55e',
+                          cursor: 'pointer', whiteSpace: 'nowrap',
+                        }}>
                           {prof.active ? 'Desativar' : 'Ativar'}
                         </button>
                       </form>
                     </div>
 
+                    {/* Hours */}
                     {activeHours.length > 0 && (
-                      <div style={{ borderTop: '1px solid hsl(222,20%,12%)', paddingTop: '0.875rem' }}>
-                        <p style={{ fontSize: 12, color: 'hsl(215,14%,45%)', marginBottom: '0.5rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Horários</p>
+                      <div style={{ borderTop: '1px solid var(--border)', paddingTop: '0.875rem' }}>
+                        <p className="section-label" style={{ marginBottom: '0.625rem' }}>Horários</p>
                         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                           {activeHours.map((h) => (
-                            <span key={h.day_of_week} style={{ fontSize: 12, padding: '0.25rem 0.625rem', borderRadius: 6, background: 'rgba(255,120,32,0.1)', color: 'hsl(28,98%,60%)' }}>
-                              {daysOfWeek[h.day_of_week]} {h.start_time.slice(0, 5)}–{h.end_time.slice(0, 5)}
+                            <span key={h.day_of_week} style={{ fontSize: 12, fontWeight: 600, padding: '0.25rem 0.625rem', borderRadius: 6, background: 'rgba(255,120,32,0.08)', color: 'hsl(28,98%,60%)', border: '1px solid rgba(255,120,32,0.15)' }}>
+                              {daysOfWeek[h.day_of_week]} · {h.start_time.slice(0,5)}–{h.end_time.slice(0,5)}
                             </span>
                           ))}
                         </div>
@@ -97,78 +115,46 @@ export default async function ProfissionaisPage() {
         </div>
 
         {/* Add form */}
-        <div style={{ background: 'hsl(222,20%,7%)', border: '1px solid hsl(222,20%,12%)', borderRadius: 12, padding: '1.5rem', position: 'sticky', top: '2rem' }}>
-          <h2 style={{ fontSize: 15, fontWeight: 700, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'hsl(215,20%,85%)' }}>
-            <Plus size={18} color="hsl(28,98%,55%)" />
+        <div className="card" style={{ padding: '1.5rem', position: 'sticky', top: '1.5rem' }}>
+          <h2 style={{ fontSize: 14.5, fontWeight: 700, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--fg)' }}>
+            <div style={{ width: 28, height: 28, background: 'var(--primary-glow)', borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Plus size={16} color="var(--primary)" />
+            </div>
             Novo Profissional
           </h2>
           <form action={createProfessional} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <input type="hidden" name="company_id" value={companyId ?? ''} />
-            {[
-              { name: 'name', label: 'Nome completo', type: 'text', placeholder: 'Maria Silva', required: true },
-              { name: 'bio', label: 'Bio / Especialidade', type: 'text', placeholder: 'Especialista em coloração' },
-              { name: 'avatar_url', label: 'URL da foto', type: 'url', placeholder: 'https://...' },
-            ].map((field) => (
-              <div key={field.name}>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'hsl(215,20%,65%)', marginBottom: '0.375rem' }}>
-                  {field.label} {field.required && <span style={{ color: 'hsl(28,98%,55%)' }}>*</span>}
-                </label>
-                <input
-                  type={field.type}
-                  name={field.name}
-                  placeholder={field.placeholder}
-                  required={field.required}
-                  style={{
-                    width: '100%',
-                    background: 'hsl(224,24%,5%)',
-                    border: '1px solid hsl(222,20%,16%)',
-                    borderRadius: 7,
-                    padding: '0.625rem 0.75rem',
-                    color: 'hsl(215,20%,88%)',
-                    fontSize: 14,
-                    outline: 'none',
-                  }}
-                />
-              </div>
-            ))}
+
+            <div>
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'hsl(215,20%,62%)', marginBottom: '0.4rem' }}>
+                Nome completo <span style={{ color: 'var(--primary)' }}>*</span>
+              </label>
+              <input type="text" name="name" placeholder="Maria Silva" required className="input" />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'hsl(215,20%,62%)', marginBottom: '0.4rem' }}>Bio / Especialidade</label>
+              <input type="text" name="bio" placeholder="Especialista em coloração" className="input" />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'hsl(215,20%,62%)', marginBottom: '0.4rem' }}>URL da foto</label>
+              <input type="url" name="avatar_url" placeholder="https://..." className="input" />
+            </div>
 
             {/* Working hours */}
             <div>
-              <p style={{ fontSize: 12, fontWeight: 600, color: 'hsl(215,20%,65%)', marginBottom: '0.75rem' }}>Horários de trabalho</p>
+              <p className="section-label" style={{ marginBottom: '0.75rem' }}>Horários de trabalho</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 {daysOfWeek.map((day, i) => (
-                  <div key={i} style={{ display: 'grid', gridTemplateColumns: '2.5rem 1fr 1fr', gap: '0.5rem', alignItems: 'center' }}>
-                    <span style={{ fontSize: 12, color: 'hsl(215,14%,55%)', fontWeight: 600 }}>{day}</span>
-                    <input
-                      type="time"
-                      name={`start_${i}`}
-                      style={{ background: 'hsl(224,24%,5%)', border: '1px solid hsl(222,20%,16%)', borderRadius: 6, padding: '0.4rem 0.5rem', color: 'hsl(215,20%,80%)', fontSize: 12 }}
-                    />
-                    <input
-                      type="time"
-                      name={`end_${i}`}
-                      style={{ background: 'hsl(224,24%,5%)', border: '1px solid hsl(222,20%,16%)', borderRadius: 6, padding: '0.4rem 0.5rem', color: 'hsl(215,20%,80%)', fontSize: 12 }}
-                    />
+                  <div key={i} style={{ display: 'grid', gridTemplateColumns: '2.75rem 1fr 1fr', gap: '0.5rem', alignItems: 'center' }}>
+                    <span style={{ fontSize: 12, color: 'var(--fg-muted)', fontWeight: 600 }}>{day}</span>
+                    <input type="time" name={`start_${i}`} className="input" style={{ padding: '0.4rem 0.5rem', fontSize: 13 }} />
+                    <input type="time" name={`end_${i}`}   className="input" style={{ padding: '0.4rem 0.5rem', fontSize: 13 }} />
                   </div>
                 ))}
               </div>
             </div>
 
-            <button
-              type="submit"
-              style={{
-                width: '100%',
-                background: 'hsl(28,98%,55%)',
-                color: '#fff',
-                padding: '0.7rem',
-                borderRadius: 8,
-                border: 'none',
-                fontWeight: 700,
-                fontSize: 14,
-                cursor: 'pointer',
-                marginTop: '0.25rem',
-              }}
-            >
+            <button type="submit" className="btn-primary" style={{ width: '100%', padding: '0.75rem', fontSize: 14, marginTop: '0.25rem' }}>
               Adicionar profissional
             </button>
           </form>
