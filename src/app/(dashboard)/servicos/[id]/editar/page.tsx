@@ -1,12 +1,14 @@
 import { createClient } from '@/lib/supabase/server'
+import { createServiceRoleClient } from '@/lib/supabase/service'
 import { updateService } from '@/app/actions/services'
 import { notFound, redirect } from 'next/navigation'
 import { ArrowLeft, Scissors } from 'lucide-react'
 
 export default async function EditarServicoPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const authClient = await createClient()
+  const { data: { user } } = await authClient.auth.getUser()
+  const supabase = createServiceRoleClient()
   const { data: userData } = await supabase.from('users').select('company_id').eq('id', user?.id ?? '').single()
 
   const { data: svc } = await supabase
