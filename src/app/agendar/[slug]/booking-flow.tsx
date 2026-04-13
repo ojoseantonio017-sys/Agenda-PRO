@@ -137,7 +137,7 @@ export default function BookingFlow({ company, services, professionals }: Bookin
           <h2 style={{ fontSize: 22, fontWeight: 800, color: 'hsl(215,20%,92%)', marginBottom: '0.75rem' }}>Agendamento confirmado!</h2>
           <p style={{ color: 'hsl(215,14%,55%)', fontSize: 14, lineHeight: 1.7, marginBottom: '1.5rem' }}>
             {selectedService?.name} com <strong style={{ color: 'hsl(215,20%,85%)' }}>{selectedProfessional?.name}</strong><br />
-            <strong style={{ color: 'hsl(28,98%,55%)' }}>{selectedDate} às {selectedTime}</strong>
+            <strong style={{ color: 'hsl(258,85%,65%)' }}>{selectedDate} às {selectedTime}</strong>
           </p>
           {waLink && (
             <a
@@ -182,7 +182,7 @@ export default function BookingFlow({ company, services, professionals }: Bookin
           <div key={s} style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
             <div style={{
               width: 28, height: 28, borderRadius: '50%',
-              background: i === step ? 'hsl(28,98%,55%)' : i < step ? 'rgba(34,197,94,0.3)' : 'hsl(222,20%,12%)',
+              background: i === step ? 'hsl(258,85%,65%)' : i < step ? 'rgba(34,197,94,0.3)' : 'hsl(222,20%,12%)',
               color: i === step ? '#fff' : i < step ? '#22c55e' : 'hsl(215,14%,45%)',
               fontSize: 12, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>{i < step ? '✓' : i + 1}</div>
@@ -204,8 +204,8 @@ export default function BookingFlow({ company, services, professionals }: Bookin
                 key={svc.id}
                 onClick={() => { setSelectedService(svc); setStep(1) }}
                 style={{
-                  background: selectedService?.id === svc.id ? 'rgba(255,120,32,0.12)' : 'hsl(224,24%,5%)',
-                  border: `1px solid ${selectedService?.id === svc.id ? 'hsl(28,98%,55%)' : 'hsl(222,20%,16%)'}`,
+                  background: selectedService?.id === svc.id ? 'rgba(124,77,255,0.12)' : 'hsl(224,24%,5%)',
+                  border: `1px solid ${selectedService?.id === svc.id ? 'hsl(258,85%,65%)' : 'hsl(222,20%,16%)'}`,
                   borderRadius: 10, padding: '1rem', cursor: 'pointer', textAlign: 'left',
                   display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                 }}
@@ -215,7 +215,7 @@ export default function BookingFlow({ company, services, professionals }: Bookin
                   {svc.description && <p style={{ fontSize: 13, color: 'hsl(215,14%,50%)' }}>{svc.description}</p>}
                   <p style={{ fontSize: 13, color: 'hsl(215,14%,50%)', marginTop: '0.25rem' }}>{svc.duration_minutes} min</p>
                 </div>
-                <span style={{ fontSize: 16, fontWeight: 800, color: 'hsl(28,98%,55%)', flexShrink: 0, marginLeft: '1rem' }}>
+                <span style={{ fontSize: 16, fontWeight: 800, color: 'hsl(258,85%,65%)', flexShrink: 0, marginLeft: '1rem' }}>
                   R$ {(svc.price / 100).toFixed(2)}
                 </span>
               </button>
@@ -231,13 +231,13 @@ export default function BookingFlow({ company, services, professionals }: Bookin
                 key={prof.id}
                 onClick={() => { setSelectedProfessional(prof); setStep(2) }}
                 style={{
-                  background: selectedProfessional?.id === prof.id ? 'rgba(255,120,32,0.12)' : 'hsl(224,24%,5%)',
-                  border: `1px solid ${selectedProfessional?.id === prof.id ? 'hsl(28,98%,55%)' : 'hsl(222,20%,16%)'}`,
+                  background: selectedProfessional?.id === prof.id ? 'rgba(124,77,255,0.12)' : 'hsl(224,24%,5%)',
+                  border: `1px solid ${selectedProfessional?.id === prof.id ? 'hsl(258,85%,65%)' : 'hsl(222,20%,16%)'}`,
                   borderRadius: 10, padding: '1rem', cursor: 'pointer', textAlign: 'left',
                   display: 'flex', alignItems: 'center', gap: '0.875rem',
                 }}
               >
-                <div style={{ width: 40, height: 40, background: 'rgba(255,120,32,0.15)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, fontWeight: 700, color: 'hsl(28,98%,60%)', flexShrink: 0 }}>
+                <div style={{ width: 40, height: 40, background: 'rgba(124,77,255,0.15)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, fontWeight: 700, color: 'hsl(258,85%,72%)', flexShrink: 0 }}>
                   {prof.name.charAt(0)}
                 </div>
                 <div>
@@ -278,9 +278,9 @@ export default function BookingFlow({ company, services, professionals }: Bookin
                         style={{
                           padding: '0.5rem',
                           borderRadius: 7,
-                          border: `1px solid ${selectedTime === slot ? 'hsl(28,98%,55%)' : 'hsl(222,20%,18%)'}`,
-                          background: selectedTime === slot ? 'rgba(255,120,32,0.15)' : 'hsl(224,24%,5%)',
-                          color: selectedTime === slot ? 'hsl(28,98%,60%)' : 'hsl(215,14%,65%)',
+                          border: `1px solid ${selectedTime === slot ? 'hsl(258,85%,65%)' : 'hsl(222,20%,18%)'}`,
+                          background: selectedTime === slot ? 'rgba(124,77,255,0.15)' : 'hsl(224,24%,5%)',
+                          color: selectedTime === slot ? 'hsl(258,85%,72%)' : 'hsl(215,14%,65%)',
                           fontSize: 13, fontWeight: 600, cursor: 'pointer',
                         }}
                       >
@@ -347,7 +347,7 @@ export default function BookingFlow({ company, services, professionals }: Bookin
               disabled={loading}
               style={{
                 width: '100%',
-                background: loading ? 'rgba(255,120,32,0.5)' : 'hsl(28,98%,55%)',
+                background: loading ? 'rgba(124,77,255,0.5)' : 'hsl(258,85%,65%)',
                 color: '#fff',
                 padding: '0.875rem',
                 borderRadius: 10,
@@ -379,7 +379,7 @@ export default function BookingFlow({ company, services, professionals }: Bookin
                 if (step === 3 && (!clientName || !clientPhone)) { setError('Preencha nome e telefone.'); return }
                 setError(''); setStep(step + 1)
               }}
-              style={{ background: 'hsl(28,98%,55%)', color: '#fff', padding: '0.625rem 1.25rem', borderRadius: 8, border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 14, marginLeft: 'auto' }}
+              style={{ background: 'hsl(258,85%,65%)', color: '#fff', padding: '0.625rem 1.25rem', borderRadius: 8, border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 14, marginLeft: 'auto' }}
             >
               Continuar →
             </button>

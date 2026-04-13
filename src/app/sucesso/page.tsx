@@ -15,7 +15,7 @@ export default async function SucessoPage({
   const planName = planNames[params.plan ?? ''] ?? 'selecionado'
 
   return (
-    <div style={{ minHeight: '100vh', background: 'hsl(224,24%,3.5%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
+    <div style={{ minHeight: '100vh', background: 'hsl(244,22%,4%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
       <div style={{ width: '100%', maxWidth: 500, textAlign: 'center' }}>
         {/* Icon */}
         <div style={{ width: 80, height: 80, background: 'rgba(34,197,94,0.12)', border: '2px solid rgba(34,197,94,0.3)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 2rem' }}>
@@ -26,11 +26,11 @@ export default async function SucessoPage({
           Pagamento confirmado!
         </h1>
         <p style={{ color: 'hsl(215,14%,55%)', fontSize: 16, lineHeight: 1.7, marginBottom: '2rem' }}>
-          Seu plano <strong style={{ color: 'hsl(28,98%,55%)' }}>{planName}</strong> foi ativado com sucesso.
+          Seu plano <strong style={{ color: 'hsl(258,85%,65%)' }}>{planName}</strong> foi ativado com sucesso.
           Você receberá um email com as credenciais de acesso em breve.
         </p>
 
-        <div style={{ background: 'hsl(222,20%,7%)', border: '1px solid hsl(222,20%,12%)', borderRadius: 12, padding: '1.5rem', marginBottom: '2rem' }}>
+        <div style={{ background: 'hsl(244,18%,7.5%)', border: '1px solid hsl(244,18%,13%)', borderRadius: 12, padding: '1.5rem', marginBottom: '2rem' }}>
           <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: '1rem', color: 'hsl(215,20%,85%)' }}>
             Próximos passos
           </h2>
@@ -42,7 +42,7 @@ export default async function SucessoPage({
               'Comece a receber agendamentos online!',
             ].map((step, i) => (
               <li key={i} style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start', fontSize: 14, color: 'hsl(215,14%,65%)' }}>
-                <span style={{ width: 22, height: 22, background: 'hsl(28,98%,55%)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 800, color: '#fff', flexShrink: 0 }}>
+                <span style={{ width: 22, height: 22, background: 'hsl(258,85%,65%)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 800, color: '#fff', flexShrink: 0 }}>
                   {i + 1}
                 </span>
                 {step}
@@ -57,7 +57,7 @@ export default async function SucessoPage({
             display: 'inline-flex',
             alignItems: 'center',
             gap: '0.5rem',
-            background: 'hsl(28,98%,55%)',
+            background: 'hsl(258,85%,65%)',
             color: '#fff',
             padding: '0.875rem 2rem',
             borderRadius: 10,

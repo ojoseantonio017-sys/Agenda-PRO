@@ -25,10 +25,10 @@ export default async function AgendarPage({ params }: { params: Promise<{ slug: 
   ])
 
   return (
-    <div style={{ minHeight: '100vh', background: 'hsl(224,24%,3.5%)', padding: '1.5rem' }}>
+    <div style={{ minHeight: '100vh', background: 'hsl(244,22%,4%)', padding: '1.5rem' }}>
       {/* Header */}
       <div style={{ maxWidth: 600, margin: '0 auto', textAlign: 'center', marginBottom: '2rem' }}>
-        <div style={{ width: 56, height: 56, background: 'hsl(28,98%,55%)', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem', fontSize: 24, fontWeight: 800, color: '#fff' }}>
+        <div style={{ width: 56, height: 56, background: 'hsl(258,85%,65%)', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem', fontSize: 24, fontWeight: 800, color: '#fff' }}>
           {company.name.charAt(0).toUpperCase()}
         </div>
         <h1 style={{ fontSize: 24, fontWeight: 800, color: 'hsl(215,20%,92%)', marginBottom: '0.5rem' }}>{company.name}</h1>

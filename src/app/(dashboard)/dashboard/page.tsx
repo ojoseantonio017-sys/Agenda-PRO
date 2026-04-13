@@ -140,7 +140,7 @@ export default async function DashboardPage() {
                 return (
                   <div key={apt.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem', background: 'hsl(224,24%,5%)', borderRadius: 8 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <span style={{ fontSize: 13, fontWeight: 700, color: 'hsl(28,98%,55%)', minWidth: 40 }}>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: 'hsl(258,85%,65%)', minWidth: 40 }}>
                         {apt.start_time.slice(0, 5)}
                       </span>
                       <div>
@@ -180,7 +180,7 @@ export default async function DashboardPage() {
                   style={{
                     width: '100%',
                     height: `${(val / maxBar) * 100}%`,
-                    background: i === barData.length - 1 ? 'hsl(28,98%,55%)' : 'hsl(222,20%,18%)',
+                    background: i === barData.length - 1 ? 'hsl(258,85%,65%)' : 'hsl(222,20%,18%)',
                     borderRadius: '4px 4px 0 0',
                     minHeight: 4,
                   }}

@@ -51,7 +51,7 @@ export default async function ProfissionaisPage() {
                   <div key={prof.id} className="card" style={{ padding: '1.375rem', opacity: prof.active ? 1 : 0.6 }}>
                     <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', marginBottom: activeHours.length > 0 ? '1rem' : 0 }}>
                       {/* Avatar */}
-                      <div style={{ width: 48, height: 48, background: prof.active ? 'rgba(255,120,32,0.1)' : 'var(--bg-3)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
+                      <div style={{ width: 48, height: 48, background: prof.active ? 'rgba(124,77,255,0.1)' : 'var(--bg-3)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
                         {prof.avatar_url ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img src={prof.avatar_url} alt={prof.name} style={{ width: 48, height: 48, objectFit: 'cover' }} />
@@ -100,7 +100,7 @@ export default async function ProfissionaisPage() {
                         <p className="section-label" style={{ marginBottom: '0.625rem' }}>Horários</p>
                         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                           {activeHours.map((h) => (
-                            <span key={h.day_of_week} style={{ fontSize: 12, fontWeight: 600, padding: '0.25rem 0.625rem', borderRadius: 6, background: 'rgba(255,120,32,0.08)', color: 'hsl(28,98%,60%)', border: '1px solid rgba(255,120,32,0.15)' }}>
+                            <span key={h.day_of_week} style={{ fontSize: 12, fontWeight: 600, padding: '0.25rem 0.625rem', borderRadius: 6, background: 'rgba(124,77,255,0.08)', color: 'hsl(258,85%,72%)', border: '1px solid rgba(124,77,255,0.15)' }}>
                               {daysOfWeek[h.day_of_week]} · {h.start_time.slice(0,5)}–{h.end_time.slice(0,5)}
                             </span>
                           ))}
@@ -127,7 +127,7 @@ export default async function ProfissionaisPage() {
 
             <div>
               <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'hsl(215,20%,62%)', marginBottom: '0.4rem' }}>
-                Nome completo <span style={{ color: 'var(--primary)' }}>*</span>
+                Nome completo <span style={{ color: 'hsl(258,85%,65%)' }}>*</span>
               </label>
               <input type="text" name="name" placeholder="Maria Silva" required className="input" />
             </div>

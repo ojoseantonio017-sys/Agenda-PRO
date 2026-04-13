@@ -76,7 +76,7 @@ export default function LandingPage() {
       {/* ── Navbar ───────────────────────────────── */}
       <nav style={{ position: 'sticky', top: 0, zIndex: 100, borderBottom: '1px solid var(--border)', backdropFilter: 'blur(16px)', background: 'rgba(9,11,17,0.85)', padding: '0 2rem', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
-          <div style={{ width: 34, height: 34, background: 'var(--primary)', borderRadius: 9, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: 17, color: '#fff', boxShadow: '0 4px 12px rgba(255,120,32,0.3)' }}>A</div>
+          <div style={{ width: 34, height: 34, background: 'var(--primary)', borderRadius: 9, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: 17, color: '#fff', boxShadow: '0 4px 12px rgba(124,77,255,0.35)' }}>A</div>
           <span style={{ fontWeight: 800, fontSize: 17, letterSpacing: '-0.01em' }}>AgendaPRO</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
@@ -87,7 +87,7 @@ export default function LandingPage() {
 
       {/* ── Hero ─────────────────────────────────── */}
       <section className="hero-bg" style={{ textAlign: 'center', padding: '6rem 1.5rem 5rem' }}>
-        <div className="animate-fade-up" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(255,120,32,0.1)', border: '1px solid rgba(255,120,32,0.25)', color: 'var(--primary)', padding: '0.3rem 0.875rem', borderRadius: 999, fontSize: 13, fontWeight: 600, marginBottom: '1.75rem' }}>
+        <div className="animate-fade-up" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(124,77,255,0.1)', border: '1px solid rgba(124,77,255,0.25)', color: 'var(--primary)', padding: '0.3rem 0.875rem', borderRadius: 999, fontSize: 13, fontWeight: 600, marginBottom: '1.75rem' }}>
           <Zap size={13} fill="currentColor" />
           Sistema de Agendamento Online
         </div>
@@ -155,10 +155,10 @@ export default function LandingPage() {
               borderRadius: 'var(--radius-lg)',
               padding: '2rem',
               position: 'relative',
-              boxShadow: plan.highlight ? '0 0 40px rgba(255,120,32,0.07)' : 'none',
+              boxShadow: plan.highlight ? '0 0 40px rgba(124,77,255,0.1)' : 'none',
             }}>
               {plan.highlight && (
-                <div style={{ position: 'absolute', top: -13, left: '50%', transform: 'translateX(-50%)', background: 'var(--primary)', color: '#fff', padding: '0.2rem 1rem', borderRadius: 999, fontSize: 12, fontWeight: 700, whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                <div style={{ position: 'absolute', top: -13, left: '50%', transform: 'translateX(-50%)', background: 'hsl(258,85%,60%)', color: '#fff', padding: '0.2rem 1rem', borderRadius: 999, fontSize: 12, fontWeight: 700, whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                   <Star size={11} fill="white" /> {plan.badge}
                 </div>
               )}
@@ -240,7 +240,7 @@ export default function LandingPage() {
       {/* ── Footer ───────────────────────────────── */}
       <footer style={{ borderTop: '1px solid var(--border)', padding: '2rem 1.5rem', textAlign: 'center', color: 'var(--fg-subtle)', fontSize: 13 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
-          <div style={{ width: 26, height: 26, background: 'var(--primary)', borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: 13, color: '#fff' }}>A</div>
+          <div style={{ width: 26, height: 26, background: 'var(--primary)', borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: 13, color: '#fff', boxShadow: '0 2px 8px rgba(124,77,255,0.3)' }}>A</div>
           <span style={{ fontWeight: 700, color: 'hsl(215,20%,65%)', fontSize: 14 }}>AgendaPRO</span>
         </div>
         <p>© {new Date().getFullYear()} AgendaPRO. Todos os direitos reservados.</p>

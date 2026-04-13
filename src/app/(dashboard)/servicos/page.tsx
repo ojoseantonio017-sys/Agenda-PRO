@@ -45,7 +45,7 @@ export default async function ServicosPage() {
                 active: boolean
               }) => (
                 <div key={svc.id} className="card" style={{ padding: '1.25rem', display: 'flex', alignItems: 'center', gap: '1rem', opacity: svc.active ? 1 : 0.6 }}>
-                  <div style={{ width: 44, height: 44, background: svc.active ? 'rgba(255,120,32,0.1)' : 'var(--bg-3)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <div style={{ width: 44, height: 44, background: svc.active ? 'rgba(124,77,255,0.1)' : 'var(--bg-3)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <Scissors size={20} color={svc.active ? 'var(--primary)' : 'var(--fg-subtle)'} />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -63,7 +63,7 @@ export default async function ServicosPage() {
                         <Clock size={13} color="var(--fg-subtle)" />
                         {svc.duration_minutes} min
                       </span>
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: 13, fontWeight: 700, color: 'var(--primary)' }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: 13, fontWeight: 700, color: 'hsl(258,85%,65%)' }}>
                         <DollarSign size={13} />
                         R$ {(svc.price / 100).toFixed(2)}
                       </span>
@@ -98,7 +98,7 @@ export default async function ServicosPage() {
 
             <div>
               <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'hsl(215,20%,62%)', marginBottom: '0.4rem' }}>
-                Nome do serviço <span style={{ color: 'var(--primary)' }}>*</span>
+                Nome do serviço <span style={{ color: 'hsl(258,85%,65%)' }}>*</span>
               </label>
               <input type="text" name="name" placeholder="Ex: Corte de cabelo" required className="input" />
             </div>
@@ -108,13 +108,13 @@ export default async function ServicosPage() {
             </div>
             <div>
               <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'hsl(215,20%,62%)', marginBottom: '0.4rem' }}>
-                Duração (minutos) <span style={{ color: 'var(--primary)' }}>*</span>
+                Duração (minutos) <span style={{ color: 'hsl(258,85%,65%)' }}>*</span>
               </label>
               <input type="number" name="duration_minutes" placeholder="60" required min="1" className="input" />
             </div>
             <div>
               <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'hsl(215,20%,62%)', marginBottom: '0.4rem' }}>
-                Preço em centavos <span style={{ color: 'var(--primary)' }}>*</span>
+                Preço em centavos <span style={{ color: 'hsl(258,85%,65%)' }}>*</span>
               </label>
               <input type="number" name="price" placeholder="Ex: 5000 = R$50,00" required min="0" className="input" />
               <p style={{ fontSize: 11, color: 'var(--fg-subtle)', marginTop: '0.375rem' }}>5000 centavos = R$ 50,00</p>

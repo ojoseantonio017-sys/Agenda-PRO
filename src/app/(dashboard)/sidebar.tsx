@@ -22,7 +22,7 @@ export default function DashboardSidebar() {
       {/* Logo */}
       <div style={{ padding: '1.375rem 1.25rem', borderBottom: '1px solid var(--border)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
-          <div style={{ width: 32, height: 32, background: 'var(--primary)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: 16, color: '#fff', boxShadow: '0 3px 10px rgba(255,120,32,0.3)', flexShrink: 0 }}>A</div>
+          <div style={{ width: 32, height: 32, background: 'var(--primary)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: 16, color: '#fff', boxShadow: '0 3px 10px rgba(124,77,255,0.35)', flexShrink: 0 }}>A</div>
           <div>
             <p style={{ fontWeight: 800, fontSize: 15, color: 'var(--fg)', letterSpacing: '-0.01em', lineHeight: 1.2 }}>AgendaPRO</p>
           </div>
@@ -71,7 +71,7 @@ export default function DashboardSidebar() {
       {/* Mobile toggle button */}
       <button
         onClick={() => setMobileOpen(!mobileOpen)}
-        style={{ display: 'none', position: 'fixed', top: 14, left: 14, zIndex: 200, background: 'var(--primary)', border: 'none', borderRadius: 9, padding: '0.5rem', cursor: 'pointer', color: '#fff', boxShadow: '0 4px 12px rgba(255,120,32,0.3)' }}
+        style={{ display: 'none', position: 'fixed', top: 14, left: 14, zIndex: 200, background: 'var(--primary)', border: 'none', borderRadius: 9, padding: '0.5rem', cursor: 'pointer', color: '#fff', boxShadow: '0 4px 12px rgba(124,77,255,0.35)' }}
       >
         {mobileOpen ? <X size={20} /> : <Menu size={20} />}
       </button>

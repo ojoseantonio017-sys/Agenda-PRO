@@ -11,7 +11,7 @@ export default function LoginPage({
       {/* Left panel - decorative */}
       <div style={{ flex: 1, display: 'none', background: 'linear-gradient(135deg, hsl(222,24%,6%) 0%, hsl(224,24%,4%) 100%)', borderRight: '1px solid var(--border)', padding: '3rem', flexDirection: 'column', justifyContent: 'space-between', minWidth: 380 }} className="login-left">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
-          <div style={{ width: 34, height: 34, background: 'var(--primary)', borderRadius: 9, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: 17, color: '#fff', boxShadow: '0 4px 12px rgba(255,120,32,0.3)' }}>A</div>
+          <div style={{ width: 34, height: 34, background: 'var(--primary)', borderRadius: 9, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: 17, color: '#fff', boxShadow: '0 4px 12px rgba(124,77,255,0.35)' }}>A</div>
           <span style={{ fontWeight: 800, fontSize: 17 }}>AgendaPRO</span>
         </div>
         <div>
@@ -19,7 +19,7 @@ export default function LoginPage({
             &ldquo;Depois do AgendaPRO, não perco mais tempo com ligações. Meus clientes agendam sozinhos e eu foco no que sei fazer.&rdquo;
           </blockquote>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div style={{ width: 40, height: 40, background: 'rgba(255,120,32,0.15)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: 'var(--primary)', fontSize: 16 }}>M</div>
+            <div style={{ width: 40, height: 40, background: 'rgba(124,77,255,0.15)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: 'var(--primary)', fontSize: 16 }}>M</div>
             <div>
               <p style={{ fontWeight: 600, fontSize: 14, color: 'var(--fg)' }}>Maria Silva</p>
               <p style={{ fontSize: 13, color: 'var(--fg-muted)' }}>Studio MS · São Paulo</p>
