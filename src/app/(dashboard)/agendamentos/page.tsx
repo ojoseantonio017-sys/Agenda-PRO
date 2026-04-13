@@ -15,14 +15,14 @@ export default async function AgendamentosPage({
 }: {
   searchParams: Promise<{ status?: string; date?: string }>
 }) {
-  // Autenticado: só para pegar o company_id do usuário
+  // Pega o user autenticado pelo JWT (não usa RLS aqui)
   const authClient = await createClient()
   const { data: { user } } = await authClient.auth.getUser()
-  const { data: userData } = await authClient.from('users').select('company_id').eq('id', user?.id ?? '').single()
-  const companyId = userData?.company_id
 
-  // Service role: leitura sem bloqueio de RLS, filtrado manualmente pelo companyId
+  // Service role para tudo: evita qualquer bloqueio de RLS
   const supabase = createServiceRoleClient()
+  const { data: userData } = await supabase.from('users').select('company_id').eq('id', user?.id ?? '').single()
+  const companyId = userData?.company_id
 
   const params = await searchParams
   const today = new Date().toISOString().split('T')[0]
