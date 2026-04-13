@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createServiceRoleClient } from '@/lib/supabase/service'
 import { createProfessional, toggleProfessional, deleteProfessional } from '@/app/actions/professionals'
 import { Plus, UserCircle, Clock, Pencil } from 'lucide-react'
+import DeleteButton from '../components/delete-button'
 
 const daysOfWeek = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
 
@@ -107,15 +108,7 @@ export default async function ProfissionaisPage() {
                             {prof.active ? 'Desativar' : 'Ativar'}
                           </button>
                         </form>
-                        <form action={deleteProfessional.bind(null, prof.id)} onSubmit={(e) => { if (!confirm('Excluir este profissional?')) e.preventDefault() }}>
-                          <button type="submit" style={{
-                            fontSize: 12, fontWeight: 700, padding: '0.4rem 0.75rem', borderRadius: 7, border: 'none',
-                            background: 'rgba(239,68,68,0.06)', color: '#ef4444',
-                            cursor: 'pointer', whiteSpace: 'nowrap',
-                          }}>
-                            Excluir
-                          </button>
-                        </form>
+                        <DeleteButton action={deleteProfessional.bind(null, prof.id)} />
                       </div>
                     </div>
 

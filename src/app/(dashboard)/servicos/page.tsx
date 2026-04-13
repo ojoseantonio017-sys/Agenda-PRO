@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createServiceRoleClient } from '@/lib/supabase/service'
 import { createService, toggleService, deleteService } from '@/app/actions/services'
 import { Plus, Clock, DollarSign, Scissors, Pencil } from 'lucide-react'
+import DeleteButton from '../components/delete-button'
 
 export default async function ServicosPage() {
   const authClient = await createClient()
@@ -96,15 +97,7 @@ export default async function ServicosPage() {
                         {svc.active ? 'Desativar' : 'Ativar'}
                       </button>
                     </form>
-                    <form action={deleteService.bind(null, svc.id)} onSubmit={(e) => { if (!confirm('Excluir este serviço?')) e.preventDefault() }}>
-                      <button type="submit" style={{
-                        fontSize: 12, fontWeight: 700, padding: '0.4rem 0.75rem', borderRadius: 7, border: 'none',
-                        background: 'rgba(239,68,68,0.06)', color: '#ef4444',
-                        cursor: 'pointer', whiteSpace: 'nowrap',
-                      }}>
-                        Excluir
-                      </button>
-                    </form>
+                    <DeleteButton action={deleteService.bind(null, svc.id)} />
                   </div>
                 </div>
               ))}
