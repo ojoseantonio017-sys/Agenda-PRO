@@ -3,8 +3,7 @@ import { createServiceRoleClient } from '@/lib/supabase/service'
 import { updateProfessional } from '@/app/actions/professionals'
 import { notFound, redirect } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
-
-const daysOfWeek = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
+import WorkingHoursSelector from '@/app/(dashboard)/components/working-hours-selector'
 
 export default async function EditarProfissionalPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -72,33 +71,7 @@ export default async function EditarProfissionalPage({ params }: { params: Promi
 
             <div>
               <p className="section-label" style={{ marginBottom: '0.75rem' }}>Horários de trabalho</p>
-              <p style={{ fontSize: 12, color: 'var(--fg-subtle)', marginBottom: '0.75rem' }}>
-                Deixe em branco para remover o dia. Os horários salvos aqui substituem os atuais.
-              </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                {daysOfWeek.map((day, i) => {
-                  const existing = workingHours.find((h) => h.day_of_week === i)
-                  return (
-                    <div key={i} style={{ display: 'grid', gridTemplateColumns: '2.75rem 1fr 1fr', gap: '0.5rem', alignItems: 'center' }}>
-                      <span style={{ fontSize: 12, color: existing?.active ? 'var(--fg-muted)' : 'var(--fg-subtle)', fontWeight: 600 }}>{day}</span>
-                      <input
-                        type="time"
-                        name={`start_${i}`}
-                        defaultValue={existing?.start_time?.slice(0, 5) ?? ''}
-                        className="input"
-                        style={{ padding: '0.4rem 0.5rem', fontSize: 13 }}
-                      />
-                      <input
-                        type="time"
-                        name={`end_${i}`}
-                        defaultValue={existing?.end_time?.slice(0, 5) ?? ''}
-                        className="input"
-                        style={{ padding: '0.4rem 0.5rem', fontSize: 13 }}
-                      />
-                    </div>
-                  )
-                })}
-              </div>
+              <WorkingHoursSelector initialHours={workingHours} />
             </div>
 
             <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>

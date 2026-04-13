@@ -3,6 +3,7 @@ import { createServiceRoleClient } from '@/lib/supabase/service'
 import { createProfessional, toggleProfessional, deleteProfessional } from '@/app/actions/professionals'
 import { Plus, UserCircle, Clock, Pencil } from 'lucide-react'
 import DeleteButton from '../components/delete-button'
+import WorkingHoursSelector from '../components/working-hours-selector'
 
 const daysOfWeek = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
 
@@ -160,15 +161,7 @@ export default async function ProfissionaisPage() {
             {/* Working hours */}
             <div>
               <p className="section-label" style={{ marginBottom: '0.75rem' }}>Horários de trabalho</p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                {daysOfWeek.map((day, i) => (
-                  <div key={i} style={{ display: 'grid', gridTemplateColumns: '2.75rem 1fr 1fr', gap: '0.5rem', alignItems: 'center' }}>
-                    <span style={{ fontSize: 12, color: 'var(--fg-muted)', fontWeight: 600 }}>{day}</span>
-                    <input type="time" name={`start_${i}`} className="input" style={{ padding: '0.4rem 0.5rem', fontSize: 13 }} />
-                    <input type="time" name={`end_${i}`}   className="input" style={{ padding: '0.4rem 0.5rem', fontSize: 13 }} />
-                  </div>
-                ))}
-              </div>
+              <WorkingHoursSelector />
             </div>
 
             <button type="submit" className="btn-primary" style={{ width: '100%', padding: '0.75rem', fontSize: 14, marginTop: '0.25rem' }}>
