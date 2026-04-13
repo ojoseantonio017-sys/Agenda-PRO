@@ -65,9 +65,13 @@ export async function updateAppointmentStatus(id: string, status: string) {
   const { data: userData } = await supabase.from('users').select('company_id').eq('id', user.id).single()
   if (!userData?.company_id) throw new Error('Empresa não encontrada')
 
+  // Ao concluir, marca automaticamente como pago (pagamento presencial)
+  const updateData: Record<string, string> = { status }
+  if (status === 'concluido') updateData.payment_status = 'pago'
+
   const { error } = await supabase
     .from('appointments')
-    .update({ status })
+    .update(updateData)
     .eq('id', id)
     .eq('company_id', userData.company_id)
 
