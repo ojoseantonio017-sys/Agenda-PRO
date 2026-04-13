@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { createServiceRoleClient } from '@/lib/supabase/service'
 import { updateAppointmentStatus } from '@/app/actions/appointments'
-import { CalendarCheck, Clock, CheckCircle2, XCircle } from 'lucide-react'
+import { CalendarCheck, Clock, CheckCircle2, Calendar } from 'lucide-react'
 
 const statusConfig: Record<string, { bg: string; color: string; label: string }> = {
   pendente:  { bg: 'rgba(245,158,11,0.12)',  color: '#f59e0b', label: 'Pendente'  },
@@ -44,7 +44,7 @@ export default async function AgendamentosPage({
     .select('*, services(name, price), professionals(name)')
     .eq('company_id', companyId ?? '')
     .order('date', { ascending: false })
-    .order('start_time', { ascending: false })
+    .order('start_time', { ascending: true })
 
   if (params.status) query = query.eq('status', params.status)
   if (params.date)   query = query.eq('date', params.date)
@@ -55,7 +55,7 @@ export default async function AgendamentosPage({
     { label: 'Hoje',        value: statsHoje,      icon: CalendarCheck, color: 'hsl(258,85%,65%)', bg: 'rgba(124,77,255,0.1)' },
     { label: 'Pendentes',   value: statsPendente,  icon: Clock,         color: '#f59e0b',           bg: 'rgba(245,158,11,0.1)' },
     { label: 'Confirmados', value: statsConfirmado,icon: CheckCircle2,  color: '#22c55e',           bg: 'rgba(34,197,94,0.1)'  },
-    { label: 'Total',       value: statsTotal,     icon: XCircle,       color: 'hsl(215,14%,55%)',  bg: 'var(--bg-3)'          },
+    { label: 'Total',       value: statsTotal,     icon: Calendar,      color: 'hsl(215,14%,55%)',  bg: 'var(--bg-3)'          },
   ]
 
   return (

@@ -32,6 +32,14 @@ const statusLabels: Record<string, string> = {
 
 const DAY_LABELS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
 
+function getGreeting(): string {
+  // Usa horário de Brasília (UTC-3) para cumprimento correto
+  const hour = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' })).getHours()
+  if (hour < 12) return 'Bom dia'
+  if (hour < 18) return 'Boa tarde'
+  return 'Boa noite'
+}
+
 export default async function DashboardPage() {
   const authClient = await createClient()
   const { data: { user } } = await authClient.auth.getUser()
@@ -104,7 +112,7 @@ export default async function DashboardPage() {
     <div>
       <div style={{ marginBottom: '2rem' }}>
         <h1 style={{ fontSize: 24, fontWeight: 800, color: 'hsl(215,20%,92%)', marginBottom: '0.25rem' }}>
-          Bom dia, {userData?.name?.split(' ')[0] ?? 'usuário'}!
+          {getGreeting()}, {userData?.name?.split(' ')[0] ?? 'usuário'}!
         </h1>
         <p style={{ color: 'hsl(215,14%,50%)', fontSize: 14 }}>
           Aqui está o resumo de hoje, {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })}.

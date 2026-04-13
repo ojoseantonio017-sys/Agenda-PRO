@@ -35,7 +35,7 @@ export default async function ServicosPage() {
                 <Scissors size={24} color="var(--fg-subtle)" />
               </div>
               <p style={{ color: 'var(--fg-muted)', fontSize: 14, fontWeight: 500 }}>Nenhum serviço cadastrado.</p>
-              <p style={{ color: 'var(--fg-subtle)', fontSize: 13, marginTop: '0.375rem' }}>Adicione seu primeiro serviço no formulário ao lado.</p>
+              <p style={{ color: 'var(--fg-subtle)', fontSize: 13, marginTop: '0.375rem' }}>Adicione o primeiro serviço no formulário ao lado.</p>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
@@ -97,7 +97,7 @@ export default async function ServicosPage() {
                         {svc.active ? 'Desativar' : 'Ativar'}
                       </button>
                     </form>
-                    <DeleteButton action={deleteService.bind(null, svc.id)} />
+                    <DeleteButton action={deleteService.bind(null, svc.id)} confirmMessage="Excluir este serviço? Esta ação não pode ser desfeita." />
                   </div>
                 </div>
               ))}
@@ -133,10 +133,10 @@ export default async function ServicosPage() {
             </div>
             <div>
               <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'hsl(215,20%,62%)', marginBottom: '0.4rem' }}>
-                Preço em centavos <span style={{ color: 'hsl(258,85%,65%)' }}>*</span>
+                Preço em centavos (ex: 5000 = R$&nbsp;50,00) <span style={{ color: 'hsl(258,85%,65%)' }}>*</span>
               </label>
               <input type="number" name="price" placeholder="Ex: 5000 = R$50,00" required min="0" className="input" />
-              <p style={{ fontSize: 11, color: 'var(--fg-subtle)', marginTop: '0.375rem' }}>5000 centavos = R$ 50,00</p>
+              <p style={{ fontSize: 11, color: 'var(--fg-subtle)', marginTop: '0.375rem' }}>Digite o valor em centavos: R$ 50,00 → 5000</p>
             </div>
 
             <button type="submit" className="btn-primary" style={{ width: '100%', padding: '0.75rem', fontSize: 14, marginTop: '0.25rem' }}>

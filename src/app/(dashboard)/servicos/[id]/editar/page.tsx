@@ -68,7 +68,7 @@ export default async function EditarServicoPage({ params }: { params: Promise<{ 
             </div>
             <div>
               <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'hsl(215,20%,62%)', marginBottom: '0.4rem' }}>
-                Preço em centavos <span style={{ color: 'hsl(258,85%,65%)' }}>*</span>
+                Preço em centavos (ex: 5000 = R$&nbsp;50,00) <span style={{ color: 'hsl(258,85%,65%)' }}>*</span>
               </label>
               <input type="number" name="price" defaultValue={svc.price} required min="0" className="input" />
               <p style={{ fontSize: 11, color: 'var(--fg-subtle)', marginTop: '0.375rem' }}>

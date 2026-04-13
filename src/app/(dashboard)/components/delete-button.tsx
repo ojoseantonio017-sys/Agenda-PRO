@@ -3,14 +3,19 @@
 interface DeleteButtonProps {
   action: () => Promise<void>
   label?: string
+  confirmMessage?: string
 }
 
-export default function DeleteButton({ action, label = 'Excluir' }: DeleteButtonProps) {
+export default function DeleteButton({
+  action,
+  label = 'Excluir',
+  confirmMessage = 'Tem certeza que deseja excluir? Esta ação não pode ser desfeita.',
+}: DeleteButtonProps) {
   return (
     <form
       action={action}
       onSubmit={(e) => {
-        if (!confirm('Tem certeza que deseja excluir?')) e.preventDefault()
+        if (!confirm(confirmMessage)) e.preventDefault()
       }}
     >
       <button

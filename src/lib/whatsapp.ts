@@ -36,7 +36,7 @@ function formatPhone(raw: string): string {
 
 function buildMessage(data: AppointmentNotificationData): string {
   const [year, month, day] = data.date.split('-')
-  const dateFormatted = `${day}/${month}/${year}`
+  const dateFormatted = `${String(day).padStart(2, '0')}/${String(month).padStart(2, '0')}/${year}`
   return (
     `✅ *Agendamento confirmado!*\n\n` +
     `Olá, *${data.clientName}*! Seu agendamento foi recebido com sucesso.\n\n` +

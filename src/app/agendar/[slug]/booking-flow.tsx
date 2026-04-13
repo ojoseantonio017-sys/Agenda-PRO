@@ -194,7 +194,7 @@ export default function BookingFlow({ company, services, professionals }: Bookin
 
       <div style={{ background: 'hsl(222,20%,7%)', border: '1px solid hsl(222,20%,12%)', borderRadius: 14, padding: '1.75rem' }}>
         <h2 style={{ fontSize: 16, fontWeight: 700, color: 'hsl(215,20%,85%)', marginBottom: '1.5rem' }}>
-          Passo {step + 1}: {STEPS[step]}
+          Etapa {step + 1}: {STEPS[step]}
         </h2>
 
         {/* Step 1: Service */}
@@ -385,7 +385,7 @@ export default function BookingFlow({ company, services, professionals }: Bookin
               {[
                 ['Serviço', selectedService?.name],
                 ['Profissional', selectedProfessional?.name],
-                ['Data', selectedDate],
+                ['Data', selectedDate ? selectedDate.split('-').reverse().join('/') : ''],
                 ['Horário', selectedTime],
                 ['Duração', `${selectedService?.duration_minutes} min`],
                 ['Valor', `R$ ${((selectedService?.price ?? 0) / 100).toFixed(2)}`],
@@ -437,7 +437,7 @@ export default function BookingFlow({ company, services, professionals }: Bookin
           {step < 4 && step !== 0 && step !== 1 && (
             <button
               onClick={() => {
-                if (step === 2 && (!selectedDate || !selectedTime)) { setError('Selecione data e horário.'); return }
+                if (step === 2 && (!selectedDate || !selectedTime)) { setError('Selecione uma data e um horário disponível.'); return }
                 if (step === 3 && (!clientName || !clientPhone)) { setError('Preencha nome e telefone.'); return }
                 setError(''); setStep(step + 1)
               }}

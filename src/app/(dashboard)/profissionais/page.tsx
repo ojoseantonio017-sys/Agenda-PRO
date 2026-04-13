@@ -109,7 +109,7 @@ export default async function ProfissionaisPage() {
                             {prof.active ? 'Desativar' : 'Ativar'}
                           </button>
                         </form>
-                        <DeleteButton action={deleteProfessional.bind(null, prof.id)} />
+                        <DeleteButton action={deleteProfessional.bind(null, prof.id)} confirmMessage="Excluir este profissional e todos os seus horários? Esta ação não pode ser desfeita." />
                       </div>
                     </div>
 
