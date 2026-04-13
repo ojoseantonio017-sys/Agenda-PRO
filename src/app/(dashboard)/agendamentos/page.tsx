@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { updateAppointmentStatus } from '@/app/actions/appointments'
+import { CalendarCheck, Clock, CheckCircle2, XCircle } from 'lucide-react'
 
 const statusConfig: Record<string, { bg: string; color: string; label: string }> = {
   pendente:  { bg: 'rgba(245,158,11,0.12)',  color: '#f59e0b', label: 'Pendente'  },
@@ -19,6 +20,20 @@ export default async function AgendamentosPage({
   const companyId = userData?.company_id
 
   const params = await searchParams
+  const today = new Date().toISOString().split('T')[0]
+
+  // Stats query (sem filtros)
+  const { data: allAppointments } = await supabase
+    .from('appointments')
+    .select('id, status, date')
+    .eq('company_id', companyId ?? '')
+
+  const statsHoje    = (allAppointments ?? []).filter((a) => a.date === today).length
+  const statsPendente  = (allAppointments ?? []).filter((a) => a.status === 'pendente').length
+  const statsConfirmado = (allAppointments ?? []).filter((a) => a.status === 'confirmado').length
+  const statsTotal   = (allAppointments ?? []).length
+
+  // Filtered query
   let query = supabase
     .from('appointments')
     .select('*, services(name, price), professionals(name)')
@@ -31,12 +46,34 @@ export default async function AgendamentosPage({
 
   const { data: appointments } = await query.limit(100)
 
+  const stats = [
+    { label: 'Hoje',        value: statsHoje,      icon: CalendarCheck, color: 'hsl(258,85%,65%)', bg: 'rgba(124,77,255,0.1)' },
+    { label: 'Pendentes',   value: statsPendente,  icon: Clock,         color: '#f59e0b',           bg: 'rgba(245,158,11,0.1)' },
+    { label: 'Confirmados', value: statsConfirmado,icon: CheckCircle2,  color: '#22c55e',           bg: 'rgba(34,197,94,0.1)'  },
+    { label: 'Total',       value: statsTotal,     icon: XCircle,       color: 'hsl(215,14%,55%)',  bg: 'var(--bg-3)'          },
+  ]
+
   return (
     <div>
       {/* Header */}
       <div style={{ marginBottom: '1.75rem' }}>
         <h1 style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.02em', marginBottom: '0.25rem' }}>Agendamentos</h1>
         <p style={{ color: 'var(--fg-muted)', fontSize: 14 }}>Gerencie todos os agendamentos da sua empresa.</p>
+      </div>
+
+      {/* Stats */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', marginBottom: '1.75rem' }}>
+        {stats.map(({ label, value, icon: Icon, color, bg }) => (
+          <div key={label} className="card" style={{ padding: '1.125rem 1.25rem', display: 'flex', alignItems: 'center', gap: '0.875rem' }}>
+            <div style={{ width: 40, height: 40, background: bg, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <Icon size={20} color={color} />
+            </div>
+            <div>
+              <p style={{ fontSize: 22, fontWeight: 800, color: 'var(--fg)', lineHeight: 1 }}>{value}</p>
+              <p style={{ fontSize: 12, color: 'var(--fg-subtle)', marginTop: '0.25rem', fontWeight: 500 }}>{label}</p>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Filters */}
@@ -108,13 +145,19 @@ export default async function AgendamentosPage({
                 const svc  = apt.services      && !Array.isArray(apt.services)      ? apt.services      : null
                 const prof = apt.professionals && !Array.isArray(apt.professionals) ? apt.professionals : null
                 const sc   = statusConfig[apt.status] ?? statusConfig.concluido
+                const isToday = apt.date === today
                 return (
-                  <tr key={apt.id} className="table-row-hover" style={{ borderBottom: idx < (appointments?.length ?? 0) - 1 ? '1px solid hsl(222,20%,9%)' : 'none', transition: 'background 0.12s' }}>
+                  <tr key={apt.id} style={{ borderBottom: idx < (appointments?.length ?? 0) - 1 ? '1px solid hsl(222,20%,9%)' : 'none', background: isToday ? 'rgba(124,77,255,0.03)' : 'transparent' }}>
                     <td style={{ padding: '0.875rem 1rem', whiteSpace: 'nowrap' }}>
-                      <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--fg)' }}>
-                        {new Date(apt.date + 'T00:00:00').toLocaleDateString('pt-BR')}
-                      </p>
-                      <p style={{ fontSize: 12, color: 'var(--fg-subtle)', marginTop: 2 }}>{apt.start_time.slice(0, 5)}</p>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        {isToday && <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'hsl(258,85%,65%)', display: 'inline-block', flexShrink: 0 }} />}
+                        <div>
+                          <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--fg)' }}>
+                            {new Date(apt.date + 'T00:00:00').toLocaleDateString('pt-BR')}
+                          </p>
+                          <p style={{ fontSize: 12, color: 'var(--fg-subtle)', marginTop: 2 }}>{apt.start_time.slice(0, 5)}</p>
+                        </div>
+                      </div>
                     </td>
                     <td style={{ padding: '0.875rem 1rem' }}>
                       <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--fg)' }}>{apt.client_name}</p>

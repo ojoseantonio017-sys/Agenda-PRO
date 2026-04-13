@@ -251,7 +251,7 @@ export default function BookingFlow({ company, services, professionals }: Bookin
 
         {/* Step 3: Date & Time */}
         {step === 2 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div>
               <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'hsl(215,20%,65%)', marginBottom: '0.5rem' }}>Data</label>
               <input
@@ -262,31 +262,53 @@ export default function BookingFlow({ company, services, professionals }: Bookin
                 style={inputStyle}
               />
             </div>
-            {selectedDate && (
+
+            {!selectedDate ? (
+              <div style={{ textAlign: 'center', padding: '1.75rem', background: 'hsl(224,24%,5%)', borderRadius: 10, border: '1px dashed hsl(222,20%,18%)' }}>
+                <div style={{ fontSize: 32, marginBottom: '0.625rem' }}>📅</div>
+                <p style={{ color: 'hsl(215,14%,50%)', fontSize: 14, fontWeight: 500 }}>Selecione uma data para ver os horários disponíveis</p>
+              </div>
+            ) : getSlots().length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '1.75rem', background: 'hsl(224,24%,5%)', borderRadius: 10, border: '1px dashed hsl(222,20%,18%)' }}>
+                <div style={{ fontSize: 32, marginBottom: '0.625rem' }}>😕</div>
+                <p style={{ color: 'hsl(215,14%,50%)', fontSize: 14, fontWeight: 500 }}>Nenhum horário disponível nesta data</p>
+                <p style={{ color: 'hsl(215,14%,38%)', fontSize: 13, marginTop: '0.375rem' }}>Tente outro dia da semana.</p>
+              </div>
+            ) : (
               <div>
-                <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'hsl(215,20%,65%)', marginBottom: '0.5rem' }}>Horário disponível</label>
-                {getSlots().length === 0 ? (
-                  <p style={{ color: 'hsl(215,14%,45%)', fontSize: 14 }}>
-                    Sem horários disponíveis nesta data. Escolha outro dia.
-                  </p>
-                ) : (
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: '0.5rem' }}>
-                    {getSlots().map((slot) => (
-                      <button
-                        key={slot}
-                        onClick={() => setSelectedTime(slot)}
-                        style={{
-                          padding: '0.5rem',
-                          borderRadius: 7,
-                          border: `1px solid ${selectedTime === slot ? 'hsl(258,85%,65%)' : 'hsl(222,20%,18%)'}`,
-                          background: selectedTime === slot ? 'rgba(124,77,255,0.15)' : 'hsl(224,24%,5%)',
-                          color: selectedTime === slot ? 'hsl(258,85%,72%)' : 'hsl(215,14%,65%)',
-                          fontSize: 13, fontWeight: 600, cursor: 'pointer',
-                        }}
-                      >
-                        {slot}
-                      </button>
-                    ))}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.875rem' }}>
+                  <label style={{ fontSize: 13, fontWeight: 600, color: 'hsl(215,20%,65%)' }}>Horários disponíveis</label>
+                  <span style={{ fontSize: 12, color: 'hsl(258,85%,65%)', fontWeight: 600, background: 'rgba(124,77,255,0.1)', padding: '0.2rem 0.6rem', borderRadius: 20 }}>
+                    {getSlots().length} horário{getSlots().length !== 1 ? 's' : ''}
+                  </span>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.625rem' }}>
+                  {getSlots().map((slot) => (
+                    <button
+                      key={slot}
+                      onClick={() => setSelectedTime(slot)}
+                      style={{
+                        padding: '0.875rem 0.5rem',
+                        borderRadius: 10,
+                        border: `1.5px solid ${selectedTime === slot ? 'hsl(258,85%,65%)' : 'hsl(222,20%,18%)'}`,
+                        background: selectedTime === slot ? 'rgba(124,77,255,0.18)' : 'hsl(224,24%,5%)',
+                        color: selectedTime === slot ? 'hsl(258,90%,78%)' : 'hsl(215,20%,78%)',
+                        fontSize: 16,
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        transition: 'all 0.12s',
+                        boxShadow: selectedTime === slot ? '0 0 0 3px rgba(124,77,255,0.15)' : 'none',
+                        letterSpacing: '0.02em',
+                      }}
+                    >
+                      {slot}
+                    </button>
+                  ))}
+                </div>
+                {selectedTime && (
+                  <div style={{ marginTop: '1rem', padding: '0.75rem 1rem', background: 'rgba(124,77,255,0.08)', border: '1px solid rgba(124,77,255,0.2)', borderRadius: 9, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span style={{ fontSize: 16 }}>✓</span>
+                    <span style={{ fontSize: 14, color: 'hsl(258,85%,72%)', fontWeight: 600 }}>Horário selecionado: {selectedTime}</span>
                   </div>
                 )}
               </div>

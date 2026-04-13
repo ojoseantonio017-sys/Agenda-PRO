@@ -75,6 +75,24 @@ export async function updateService(id: string, formData: FormData) {
   revalidatePath('/servicos')
 }
 
+export async function deleteService(id: string) {
+  const { supabase, companyId } = await getCompanyId()
+
+  const { data: existing } = await supabase
+    .from('services')
+    .select('id')
+    .eq('id', id)
+    .eq('company_id', companyId)
+    .single()
+
+  if (!existing) throw new Error('Serviço não encontrado.')
+
+  const { error } = await supabase.from('services').delete().eq('id', id)
+  if (error) throw new Error(`Erro ao excluir serviço: ${error.message}`)
+
+  revalidatePath('/servicos')
+}
+
 export async function toggleService(id: string, active: boolean) {
   const { supabase, companyId } = await getCompanyId()
 

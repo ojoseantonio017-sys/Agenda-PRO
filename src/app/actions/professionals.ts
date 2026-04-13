@@ -70,16 +70,51 @@ export async function updateProfessional(id: string, formData: FormData) {
 
   if (!existing) throw new Error('Profissional não encontrado.')
 
-  const data = {
-    name: (formData.get('name') as string)?.trim(),
-    bio: (formData.get('bio') as string)?.trim() || null,
-    avatar_url: (formData.get('avatar_url') as string)?.trim() || null,
+  const name = (formData.get('name') as string)?.trim()
+  const bio = (formData.get('bio') as string)?.trim() || null
+  const avatar_url = (formData.get('avatar_url') as string)?.trim() || null
+
+  if (!name) throw new Error('Nome é obrigatório.')
+
+  const { error } = await supabase.from('professionals').update({ name, bio, avatar_url }).eq('id', id)
+  if (error) throw new Error(`Erro ao atualizar profissional: ${error.message}`)
+
+  // Atualizar horários de trabalho: remove os existentes e recria
+  await supabase.from('working_hours').delete().eq('professional_id', id)
+
+  const newHours = []
+  for (let day = 0; day <= 6; day++) {
+    const start = (formData.get(`start_${day}`) as string)?.trim()
+    const end   = (formData.get(`end_${day}`) as string)?.trim()
+    if (start && end && start < end) {
+      newHours.push({ professional_id: id, day_of_week: day, start_time: start, end_time: end, active: true })
+    }
+  }
+  if (newHours.length > 0) {
+    const { error: whError } = await supabase.from('working_hours').insert(newHours)
+    if (whError) throw new Error(`Erro ao atualizar horários: ${whError.message}`)
   }
 
-  if (!data.name) throw new Error('Nome é obrigatório.')
+  revalidatePath('/profissionais')
+}
 
-  const { error } = await supabase.from('professionals').update(data).eq('id', id)
-  if (error) throw new Error(`Erro ao atualizar profissional: ${error.message}`)
+export async function deleteProfessional(id: string) {
+  const { supabase, companyId } = await getCompanyId()
+
+  const { data: existing } = await supabase
+    .from('professionals')
+    .select('id')
+    .eq('id', id)
+    .eq('company_id', companyId)
+    .single()
+
+  if (!existing) throw new Error('Profissional não encontrado.')
+
+  // Remove working hours first (FK constraint)
+  await supabase.from('working_hours').delete().eq('professional_id', id)
+
+  const { error } = await supabase.from('professionals').delete().eq('id', id)
+  if (error) throw new Error(`Erro ao excluir profissional: ${error.message}`)
 
   revalidatePath('/profissionais')
 }

@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
-import { createService, toggleService } from '@/app/actions/services'
-import { Plus, Clock, DollarSign, Scissors } from 'lucide-react'
+import { createService, toggleService, deleteService } from '@/app/actions/services'
+import { Plus, Clock, DollarSign, Scissors, Pencil } from 'lucide-react'
 
 export default async function ServicosPage() {
   const supabase = await createClient()
@@ -69,16 +69,41 @@ export default async function ServicosPage() {
                       </span>
                     </div>
                   </div>
-                  <form action={toggleService.bind(null, svc.id, !svc.active)}>
-                    <button type="submit" style={{
-                      fontSize: 12, fontWeight: 700, padding: '0.4rem 0.875rem', borderRadius: 7, border: 'none',
-                      background: svc.active ? 'rgba(239,68,68,0.1)' : 'rgba(34,197,94,0.1)',
-                      color: svc.active ? '#ef4444' : '#22c55e',
-                      cursor: 'pointer', whiteSpace: 'nowrap',
-                    }}>
-                      {svc.active ? 'Desativar' : 'Ativar'}
-                    </button>
-                  </form>
+
+                  {/* Actions */}
+                  <div style={{ display: 'flex', gap: '0.375rem', flexShrink: 0 }}>
+                    <a
+                      href={`/servicos/${svc.id}/editar`}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: '0.3rem',
+                        fontSize: 12, fontWeight: 700, padding: '0.4rem 0.75rem', borderRadius: 7,
+                        background: 'rgba(124,77,255,0.08)', color: 'hsl(258,85%,72%)',
+                        textDecoration: 'none', border: '1px solid rgba(124,77,255,0.15)',
+                      }}
+                    >
+                      <Pencil size={12} />
+                      Editar
+                    </a>
+                    <form action={toggleService.bind(null, svc.id, !svc.active)}>
+                      <button type="submit" style={{
+                        fontSize: 12, fontWeight: 700, padding: '0.4rem 0.75rem', borderRadius: 7, border: 'none',
+                        background: svc.active ? 'rgba(239,68,68,0.1)' : 'rgba(34,197,94,0.1)',
+                        color: svc.active ? '#ef4444' : '#22c55e',
+                        cursor: 'pointer', whiteSpace: 'nowrap',
+                      }}>
+                        {svc.active ? 'Desativar' : 'Ativar'}
+                      </button>
+                    </form>
+                    <form action={deleteService.bind(null, svc.id)} onSubmit={(e) => { if (!confirm('Excluir este serviço?')) e.preventDefault() }}>
+                      <button type="submit" style={{
+                        fontSize: 12, fontWeight: 700, padding: '0.4rem 0.75rem', borderRadius: 7, border: 'none',
+                        background: 'rgba(239,68,68,0.06)', color: '#ef4444',
+                        cursor: 'pointer', whiteSpace: 'nowrap',
+                      }}>
+                        Excluir
+                      </button>
+                    </form>
+                  </div>
                 </div>
               ))}
             </div>

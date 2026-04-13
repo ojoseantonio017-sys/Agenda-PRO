@@ -3,16 +3,23 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { createServiceRoleClient } from '@/lib/supabase/service'
+import { sendAppointmentConfirmation } from '@/lib/whatsapp'
 
 export async function createAppointment(formData: FormData) {
   const supabase = createServiceRoleClient()
 
+  const companyId        = formData.get('company_id') as string
+  const professionalId   = formData.get('professional_id') as string
+  const serviceId        = formData.get('service_id') as string
+  const clientName       = formData.get('client_name') as string
+  const clientPhone      = formData.get('client_phone') as string
+
   const data = {
-    company_id: formData.get('company_id') as string,
-    professional_id: formData.get('professional_id') as string,
-    service_id: formData.get('service_id') as string,
-    client_name: formData.get('client_name') as string,
-    client_phone: formData.get('client_phone') as string,
+    company_id: companyId,
+    professional_id: professionalId,
+    service_id: serviceId,
+    client_name: clientName,
+    client_phone: clientPhone,
     client_email: (formData.get('client_email') as string) || null,
     date: formData.get('date') as string,
     start_time: formData.get('start_time') as string,
@@ -27,6 +34,24 @@ export async function createAppointment(formData: FormData) {
   if (error) {
     throw new Error(`Erro ao criar agendamento: ${error.message}`)
   }
+
+  // Enviar notificação WhatsApp ao cliente (non-blocking)
+  const [companyRes, serviceRes, profRes] = await Promise.all([
+    supabase.from('companies').select('name, whatsapp').eq('id', companyId).single(),
+    supabase.from('services').select('name').eq('id', serviceId).single(),
+    supabase.from('professionals').select('name').eq('id', professionalId).single(),
+  ])
+
+  sendAppointmentConfirmation({
+    clientName,
+    clientPhone,
+    serviceName: serviceRes.data?.name ?? '',
+    professionalName: profRes.data?.name ?? '',
+    date: data.date,
+    startTime: data.start_time,
+    companyName: companyRes.data?.name ?? '',
+    companyWhatsapp: companyRes.data?.whatsapp ?? undefined,
+  }).catch(() => {/* silently ignore */})
 
   revalidatePath('/agendamentos')
 }
