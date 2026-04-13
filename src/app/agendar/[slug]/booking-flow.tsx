@@ -250,71 +250,109 @@ export default function BookingFlow({ company, services, professionals }: Bookin
         )}
 
         {/* Step 3: Date & Time */}
-        {step === 2 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <div>
-              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'hsl(215,20%,65%)', marginBottom: '0.5rem' }}>Data</label>
-              <input
-                type="date"
-                min={today}
-                value={selectedDate}
-                onChange={(e) => { setSelectedDate(e.target.value); setSelectedTime('') }}
-                style={inputStyle}
-              />
-            </div>
-
-            {!selectedDate ? (
-              <div style={{ textAlign: 'center', padding: '1.75rem', background: 'hsl(224,24%,5%)', borderRadius: 10, border: '1px dashed hsl(222,20%,18%)' }}>
-                <div style={{ fontSize: 32, marginBottom: '0.625rem' }}>📅</div>
-                <p style={{ color: 'hsl(215,14%,50%)', fontSize: 14, fontWeight: 500 }}>Selecione uma data para ver os horários disponíveis</p>
-              </div>
-            ) : getSlots().length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '1.75rem', background: 'hsl(224,24%,5%)', borderRadius: 10, border: '1px dashed hsl(222,20%,18%)' }}>
-                <div style={{ fontSize: 32, marginBottom: '0.625rem' }}>😕</div>
-                <p style={{ color: 'hsl(215,14%,50%)', fontSize: 14, fontWeight: 500 }}>Nenhum horário disponível nesta data</p>
-                <p style={{ color: 'hsl(215,14%,38%)', fontSize: 13, marginTop: '0.375rem' }}>Tente outro dia da semana.</p>
-              </div>
-            ) : (
+        {step === 2 && (() => {
+          // Gera os próximos 14 dias
+          const days: { iso: string; label: string; weekday: string; hasSlots: boolean }[] = []
+          const weekdays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
+          const months   = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']
+          for (let i = 0; i < 14; i++) {
+            const d = new Date()
+            d.setDate(d.getDate() + i)
+            const iso = d.toISOString().split('T')[0]
+            const dow = d.getDay()
+            const wh  = (selectedProfessional?.working_hours ?? []).find(
+              (h) => h.day_of_week === dow && h.active
+            )
+            const hasSlots = !!wh
+            days.push({
+              iso,
+              label: `${String(d.getDate()).padStart(2,'0')} ${months[d.getMonth()]}`,
+              weekday: weekdays[dow],
+              hasSlots,
+            })
+          }
+          const slots = getSlots()
+          return (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              {/* Day picker */}
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.875rem' }}>
-                  <label style={{ fontSize: 13, fontWeight: 600, color: 'hsl(215,20%,65%)' }}>Horários disponíveis</label>
-                  <span style={{ fontSize: 12, color: 'hsl(258,85%,65%)', fontWeight: 600, background: 'rgba(124,77,255,0.1)', padding: '0.2rem 0.6rem', borderRadius: 20 }}>
-                    {getSlots().length} horário{getSlots().length !== 1 ? 's' : ''}
-                  </span>
+                <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'hsl(215,20%,65%)', marginBottom: '0.75rem' }}>Escolha um dia</label>
+                <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.25rem' }}>
+                  {days.map((d) => {
+                    const isSelected = selectedDate === d.iso
+                    return (
+                      <button
+                        key={d.iso}
+                        disabled={!d.hasSlots}
+                        onClick={() => { setSelectedDate(d.iso); setSelectedTime('') }}
+                        style={{
+                          flexShrink: 0,
+                          display: 'flex', flexDirection: 'column', alignItems: 'center',
+                          gap: '0.25rem',
+                          padding: '0.625rem 0.75rem',
+                          borderRadius: 10,
+                          border: `1.5px solid ${isSelected ? 'hsl(258,85%,65%)' : d.hasSlots ? 'hsl(222,20%,16%)' : 'hsl(222,20%,11%)'}`,
+                          background: isSelected ? 'rgba(124,77,255,0.18)' : 'hsl(224,24%,5%)',
+                          color: isSelected ? 'hsl(258,90%,78%)' : d.hasSlots ? 'hsl(215,20%,75%)' : 'hsl(215,14%,30%)',
+                          cursor: d.hasSlots ? 'pointer' : 'not-allowed',
+                          opacity: d.hasSlots ? 1 : 0.45,
+                          minWidth: 52,
+                          boxShadow: isSelected ? '0 0 0 3px rgba(124,77,255,0.12)' : 'none',
+                        }}
+                      >
+                        <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{d.weekday}</span>
+                        <span style={{ fontSize: 15, fontWeight: 800 }}>{d.label.split(' ')[0]}</span>
+                        <span style={{ fontSize: 10, fontWeight: 500, opacity: 0.7 }}>{d.label.split(' ')[1]}</span>
+                      </button>
+                    )
+                  })}
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.625rem' }}>
-                  {getSlots().map((slot) => (
-                    <button
-                      key={slot}
-                      onClick={() => setSelectedTime(slot)}
-                      style={{
-                        padding: '0.875rem 0.5rem',
-                        borderRadius: 10,
-                        border: `1.5px solid ${selectedTime === slot ? 'hsl(258,85%,65%)' : 'hsl(222,20%,18%)'}`,
-                        background: selectedTime === slot ? 'rgba(124,77,255,0.18)' : 'hsl(224,24%,5%)',
-                        color: selectedTime === slot ? 'hsl(258,90%,78%)' : 'hsl(215,20%,78%)',
-                        fontSize: 16,
-                        fontWeight: 700,
-                        cursor: 'pointer',
-                        transition: 'all 0.12s',
-                        boxShadow: selectedTime === slot ? '0 0 0 3px rgba(124,77,255,0.15)' : 'none',
-                        letterSpacing: '0.02em',
-                      }}
-                    >
-                      {slot}
-                    </button>
-                  ))}
-                </div>
-                {selectedTime && (
-                  <div style={{ marginTop: '1rem', padding: '0.75rem 1rem', background: 'rgba(124,77,255,0.08)', border: '1px solid rgba(124,77,255,0.2)', borderRadius: 9, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span style={{ fontSize: 16 }}>✓</span>
-                    <span style={{ fontSize: 14, color: 'hsl(258,85%,72%)', fontWeight: 600 }}>Horário selecionado: {selectedTime}</span>
-                  </div>
-                )}
               </div>
-            )}
-          </div>
-        )}
+
+              {/* Time slots */}
+              {!selectedDate ? (
+                <p style={{ fontSize: 13, color: 'hsl(215,14%,40%)', textAlign: 'center', padding: '1.25rem 0' }}>Selecione um dia acima para ver os horários</p>
+              ) : slots.length === 0 ? (
+                <p style={{ fontSize: 13, color: 'hsl(215,14%,40%)', textAlign: 'center', padding: '1.25rem 0' }}>Nenhum horário disponível neste dia.</p>
+              ) : (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+                    <label style={{ fontSize: 13, fontWeight: 600, color: 'hsl(215,20%,65%)' }}>Horários disponíveis</label>
+                    <span style={{ fontSize: 12, color: 'hsl(258,85%,65%)', fontWeight: 600, background: 'rgba(124,77,255,0.1)', padding: '0.2rem 0.6rem', borderRadius: 20 }}>
+                      {slots.length} horário{slots.length !== 1 ? 's' : ''}
+                    </span>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.625rem' }}>
+                    {slots.map((slot) => (
+                      <button
+                        key={slot}
+                        onClick={() => setSelectedTime(slot)}
+                        style={{
+                          padding: '0.875rem 0.5rem',
+                          borderRadius: 10,
+                          border: `1.5px solid ${selectedTime === slot ? 'hsl(258,85%,65%)' : 'hsl(222,20%,18%)'}`,
+                          background: selectedTime === slot ? 'rgba(124,77,255,0.18)' : 'hsl(224,24%,5%)',
+                          color: selectedTime === slot ? 'hsl(258,90%,78%)' : 'hsl(215,20%,78%)',
+                          fontSize: 16, fontWeight: 700, cursor: 'pointer',
+                          boxShadow: selectedTime === slot ? '0 0 0 3px rgba(124,77,255,0.15)' : 'none',
+                          letterSpacing: '0.02em',
+                        }}
+                      >
+                        {slot}
+                      </button>
+                    ))}
+                  </div>
+                  {selectedTime && (
+                    <div style={{ marginTop: '1rem', padding: '0.75rem 1rem', background: 'rgba(124,77,255,0.08)', border: '1px solid rgba(124,77,255,0.2)', borderRadius: 9, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <span style={{ fontSize: 16 }}>✓</span>
+                      <span style={{ fontSize: 14, color: 'hsl(258,85%,72%)', fontWeight: 600 }}>Selecionado: {selectedDate.split('-').reverse().join('/')} às {selectedTime}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )
+        })()}
 
         {/* Step 4: Client data */}
         {step === 3 && (
