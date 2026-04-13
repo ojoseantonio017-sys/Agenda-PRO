@@ -92,6 +92,26 @@ async function sendViaGateway(phone: string, message: string): Promise<void> {
   }
 }
 
+// Função genérica de envio — usada pelos crons e por outras partes do sistema
+export async function sendMessage(phone: string, message: string): Promise<void> {
+  const provider = process.env.WHATSAPP_PROVIDER
+  if (!provider) return
+
+  const formattedPhone = formatPhone(phone)
+
+  try {
+    if (provider === 'meta') {
+      if (!process.env.WHATSAPP_TOKEN || !process.env.WHATSAPP_PHONE_ID) return
+      await sendViaMeta(formattedPhone, message)
+    } else if (provider === 'gateway') {
+      if (!process.env.WHATSAPP_GATEWAY_URL) return
+      await sendViaGateway(formattedPhone, message)
+    }
+  } catch (err) {
+    console.error('[WhatsApp] sendMessage failed (non-blocking):', err)
+  }
+}
+
 export async function sendAppointmentConfirmation(
   data: AppointmentNotificationData
 ): Promise<void> {
