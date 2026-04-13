@@ -74,8 +74,9 @@ export default function BookingFlow({ company, services, professionals }: Bookin
   // Get available slots for selected date and professional
   const getSlots = (): string[] => {
     if (!selectedDate || !selectedProfessional || !selectedService) return []
-    const dateObj = new Date(selectedDate + 'T12:00:00')
-    const dayOfWeek = dateObj.getDay()
+    // Usar data local para evitar bug de timezone (UTC vs Brasil)
+    const [year, month, day] = selectedDate.split('-').map(Number)
+    const dayOfWeek = new Date(year, month - 1, day).getDay()
     const wh = (selectedProfessional.working_hours ?? []).find(
       (h) => h.day_of_week === dayOfWeek && h.active
     )

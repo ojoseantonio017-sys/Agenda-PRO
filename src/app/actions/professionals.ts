@@ -2,16 +2,22 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+import { createServiceRoleClient } from '@/lib/supabase/service'
 
 async function getCompanyId() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  // Auth apenas para verificar identidade do usuário via JWT
+  const authClient = await createClient()
+  const { data: { user } } = await authClient.auth.getUser()
   if (!user) throw new Error('Não autenticado')
+
+  // Service role para evitar RLS na tabela users
+  const supabase = createServiceRoleClient()
   const { data: userData } = await supabase
     .from('users')
     .select('company_id')
     .eq('id', user.id)
     .single()
+
   if (!userData?.company_id) throw new Error('Empresa não encontrada')
   return { supabase, companyId: userData.company_id as string }
 }
@@ -33,7 +39,6 @@ export async function createProfessional(formData: FormData) {
 
   if (error) throw new Error(`Erro ao criar profissional: ${error.message}`)
 
-  // Criar horários de trabalho (apenas se início e fim forem preenchidos)
   const workingHours = []
   for (let day = 0; day <= 6; day++) {
     const start = formData.get(`start_${day}`) as string
@@ -60,7 +65,6 @@ export async function createProfessional(formData: FormData) {
 export async function updateProfessional(id: string, formData: FormData) {
   const { supabase, companyId } = await getCompanyId()
 
-  // Verifica se o profissional pertence à empresa do usuário
   const { data: existing } = await supabase
     .from('professionals')
     .select('id')
@@ -76,10 +80,14 @@ export async function updateProfessional(id: string, formData: FormData) {
 
   if (!name) throw new Error('Nome é obrigatório.')
 
-  const { error } = await supabase.from('professionals').update({ name, bio, avatar_url }).eq('id', id)
+  const { error } = await supabase.from('professionals')
+    .update({ name, bio, avatar_url })
+    .eq('id', id)
+    .eq('company_id', companyId)
+
   if (error) throw new Error(`Erro ao atualizar profissional: ${error.message}`)
 
-  // Atualizar horários de trabalho: remove os existentes e recria
+  // Substituir horários de trabalho
   await supabase.from('working_hours').delete().eq('professional_id', id)
 
   const newHours = []
@@ -110,10 +118,12 @@ export async function deleteProfessional(id: string) {
 
   if (!existing) throw new Error('Profissional não encontrado.')
 
-  // Remove working hours first (FK constraint)
   await supabase.from('working_hours').delete().eq('professional_id', id)
 
-  const { error } = await supabase.from('professionals').delete().eq('id', id)
+  const { error } = await supabase.from('professionals').delete()
+    .eq('id', id)
+    .eq('company_id', companyId)
+
   if (error) throw new Error(`Erro ao excluir profissional: ${error.message}`)
 
   revalidatePath('/profissionais')
@@ -122,7 +132,6 @@ export async function deleteProfessional(id: string) {
 export async function toggleProfessional(id: string, active: boolean) {
   const { supabase, companyId } = await getCompanyId()
 
-  // Verifica se o profissional pertence à empresa do usuário
   const { data: existing } = await supabase
     .from('professionals')
     .select('id')
@@ -132,7 +141,10 @@ export async function toggleProfessional(id: string, active: boolean) {
 
   if (!existing) throw new Error('Profissional não encontrado.')
 
-  const { error } = await supabase.from('professionals').update({ active }).eq('id', id)
+  const { error } = await supabase.from('professionals').update({ active })
+    .eq('id', id)
+    .eq('company_id', companyId)
+
   if (error) throw new Error(`Erro ao atualizar profissional: ${error.message}`)
 
   revalidatePath('/profissionais')

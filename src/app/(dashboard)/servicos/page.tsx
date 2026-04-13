@@ -114,7 +114,6 @@ export default async function ServicosPage() {
             Novo Serviço
           </h2>
           <form action={createService} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <input type="hidden" name="company_id" value={companyId ?? ''} />
 
             <div>
               <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'hsl(215,20%,62%)', marginBottom: '0.4rem' }}>

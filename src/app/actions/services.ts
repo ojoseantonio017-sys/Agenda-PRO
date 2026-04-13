@@ -2,16 +2,22 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+import { createServiceRoleClient } from '@/lib/supabase/service'
 
 async function getCompanyId() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  // Auth apenas para verificar identidade do usuário via JWT
+  const authClient = await createClient()
+  const { data: { user } } = await authClient.auth.getUser()
   if (!user) throw new Error('Não autenticado')
+
+  // Service role para evitar RLS na tabela users
+  const supabase = createServiceRoleClient()
   const { data: userData } = await supabase
     .from('users')
     .select('company_id')
     .eq('id', user.id)
     .single()
+
   if (!userData?.company_id) throw new Error('Empresa não encontrada')
   return { supabase, companyId: userData.company_id as string }
 }
@@ -45,7 +51,6 @@ export async function createService(formData: FormData) {
 export async function updateService(id: string, formData: FormData) {
   const { supabase, companyId } = await getCompanyId()
 
-  // Verifica se o serviço pertence à empresa do usuário
   const { data: existing } = await supabase
     .from('services')
     .select('id')
@@ -68,7 +73,7 @@ export async function updateService(id: string, formData: FormData) {
     description: (formData.get('description') as string)?.trim() || null,
     duration_minutes,
     price,
-  }).eq('id', id)
+  }).eq('id', id).eq('company_id', companyId)
 
   if (error) throw new Error(`Erro ao atualizar serviço: ${error.message}`)
 
@@ -87,7 +92,7 @@ export async function deleteService(id: string) {
 
   if (!existing) throw new Error('Serviço não encontrado.')
 
-  const { error } = await supabase.from('services').delete().eq('id', id)
+  const { error } = await supabase.from('services').delete().eq('id', id).eq('company_id', companyId)
   if (error) throw new Error(`Erro ao excluir serviço: ${error.message}`)
 
   revalidatePath('/servicos')
@@ -96,7 +101,6 @@ export async function deleteService(id: string) {
 export async function toggleService(id: string, active: boolean) {
   const { supabase, companyId } = await getCompanyId()
 
-  // Verifica se o serviço pertence à empresa do usuário
   const { data: existing } = await supabase
     .from('services')
     .select('id')
@@ -106,7 +110,7 @@ export async function toggleService(id: string, active: boolean) {
 
   if (!existing) throw new Error('Serviço não encontrado.')
 
-  const { error } = await supabase.from('services').update({ active }).eq('id', id)
+  const { error } = await supabase.from('services').update({ active }).eq('id', id).eq('company_id', companyId)
   if (error) throw new Error(`Erro ao atualizar serviço: ${error.message}`)
 
   revalidatePath('/servicos')
