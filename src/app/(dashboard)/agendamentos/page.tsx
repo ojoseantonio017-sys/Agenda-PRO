@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { createServiceRoleClient } from '@/lib/supabase/service'
 import { updateAppointmentStatus } from '@/app/actions/appointments'
 import { CalendarCheck, Clock, CheckCircle2, XCircle } from 'lucide-react'
 
@@ -14,10 +15,14 @@ export default async function AgendamentosPage({
 }: {
   searchParams: Promise<{ status?: string; date?: string }>
 }) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  const { data: userData } = await supabase.from('users').select('company_id').eq('id', user?.id ?? '').single()
+  // Autenticado: só para pegar o company_id do usuário
+  const authClient = await createClient()
+  const { data: { user } } = await authClient.auth.getUser()
+  const { data: userData } = await authClient.from('users').select('company_id').eq('id', user?.id ?? '').single()
   const companyId = userData?.company_id
+
+  // Service role: leitura sem bloqueio de RLS, filtrado manualmente pelo companyId
+  const supabase = createServiceRoleClient()
 
   const params = await searchParams
   const today = new Date().toISOString().split('T')[0]
@@ -28,10 +33,10 @@ export default async function AgendamentosPage({
     .select('id, status, date')
     .eq('company_id', companyId ?? '')
 
-  const statsHoje    = (allAppointments ?? []).filter((a) => a.date === today).length
-  const statsPendente  = (allAppointments ?? []).filter((a) => a.status === 'pendente').length
+  const statsHoje       = (allAppointments ?? []).filter((a) => a.date === today).length
+  const statsPendente   = (allAppointments ?? []).filter((a) => a.status === 'pendente').length
   const statsConfirmado = (allAppointments ?? []).filter((a) => a.status === 'confirmado').length
-  const statsTotal   = (allAppointments ?? []).length
+  const statsTotal      = (allAppointments ?? []).length
 
   // Filtered query
   let query = supabase
