@@ -1,10 +1,10 @@
-import { createClient } from '@/lib/supabase/server'
+import { createServiceRoleClient } from '@/lib/supabase/service'
 import { notFound } from 'next/navigation'
 import BookingFlow from './booking-flow'
 
 export default async function AgendarPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const supabase = await createClient()
+  const supabase = createServiceRoleClient()
 
   const { data: company } = await supabase
     .from('companies')
