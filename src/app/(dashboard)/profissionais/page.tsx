@@ -150,8 +150,8 @@ export default async function ProfissionaisPage() {
               <input type="text" name="name" placeholder="Maria Silva" required className="input" />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'hsl(215,20%,62%)', marginBottom: '0.4rem' }}>Bio / Especialidade</label>
-              <input type="text" name="bio" placeholder="Especialista em coloração" className="input" />
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'hsl(215,20%,62%)', marginBottom: '0.4rem' }}>Especialidade (opcional)</label>
+              <input type="text" name="bio" placeholder="Ex: Coloração, corte, escova" className="input" />
             </div>
             <div>
               <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'hsl(215,20%,62%)', marginBottom: '0.4rem' }}>URL da foto</label>

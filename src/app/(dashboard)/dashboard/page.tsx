@@ -123,7 +123,7 @@ export default async function DashboardPage() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
         <StatCard title="Agendamentos hoje" value={todayCount ?? 0} icon={CalendarCheck} color="hsl(258,85%,65%)" />
         <StatCard title="Esta semana" value={weekCount ?? 0} icon={TrendingUp} color="#22c55e" />
-        <StatCard title="Receita do mês" value={`R$ ${(monthRevenue / 100).toFixed(0)}`} icon={DollarSign} color="#3b82f6" />
+        <StatCard title="Receita do mês" value={`R$ ${(monthRevenue / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} icon={DollarSign} color="#3b82f6" />
         <StatCard title="Total de clientes" value={clientCount ?? 0} icon={Users} color="#a855f7" />
       </div>
 

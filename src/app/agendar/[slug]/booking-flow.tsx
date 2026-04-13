@@ -39,7 +39,7 @@ interface BookingFlowProps {
   professionals: Professional[]
 }
 
-const STEPS = ['Serviço', 'Profissional', 'Data & Hora', 'Seus dados', 'Confirmação']
+const STEPS = ['Serviço', 'Profissional', 'Data & Hora', 'Dados de contato', 'Confirmação']
 
 function generateTimeSlots(startTime: string, endTime: string, durationMin: number): string[] {
   const slots: string[] = []

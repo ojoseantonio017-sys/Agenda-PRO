@@ -11,11 +11,38 @@ type AppointmentStatus = typeof VALID_STATUSES[number]
 export async function createAppointment(formData: FormData) {
   const supabase = createServiceRoleClient()
 
-  const companyId      = formData.get('company_id') as string
-  const professionalId = formData.get('professional_id') as string
-  const serviceId      = formData.get('service_id') as string
-  const clientName     = formData.get('client_name') as string
-  const clientPhone    = formData.get('client_phone') as string
+  const companyId      = (formData.get('company_id') as string)?.trim()
+  const professionalId = (formData.get('professional_id') as string)?.trim()
+  const serviceId      = (formData.get('service_id') as string)?.trim()
+  const clientName     = (formData.get('client_name') as string)?.trim()
+  const clientPhone    = (formData.get('client_phone') as string)?.replace(/\D/g, '')
+  const date           = (formData.get('date') as string)?.trim()
+  const startTime      = (formData.get('start_time') as string)?.trim()
+  const endTime        = (formData.get('end_time') as string)?.trim()
+
+  // Validar campos obrigatórios
+  if (!companyId || !professionalId || !serviceId || !clientName || !clientPhone || !date || !startTime || !endTime)
+    throw new Error('Dados incompletos para o agendamento.')
+
+  // Validar formatos de data e hora
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date))
+    throw new Error('Formato de data inválido.')
+  if (!/^\d{2}:\d{2}$/.test(startTime) || !/^\d{2}:\d{2}$/.test(endTime))
+    throw new Error('Formato de horário inválido.')
+
+  // Validar que data não é passada
+  const [y, m, d] = date.split('-').map(Number)
+  const bookingDate = new Date(y, m - 1, d)
+  const today = new Date(); today.setHours(0, 0, 0, 0)
+  if (bookingDate < today) throw new Error('Não é possível agendar para datas passadas.')
+
+  // Validar integridade referencial: profissional e serviço pertencem à empresa
+  const [profCheck, svcCheck] = await Promise.all([
+    supabase.from('professionals').select('id').eq('id', professionalId).eq('company_id', companyId).eq('active', true).single(),
+    supabase.from('services').select('id').eq('id', serviceId).eq('company_id', companyId).eq('active', true).single(),
+  ])
+  if (!profCheck.data) throw new Error('Profissional não encontrado.')
+  if (!svcCheck.data)  throw new Error('Serviço não encontrado.')
 
   const data = {
     company_id:      companyId,
@@ -23,10 +50,10 @@ export async function createAppointment(formData: FormData) {
     service_id:      serviceId,
     client_name:     clientName,
     client_phone:    clientPhone,
-    client_email:    (formData.get('client_email') as string) || null,
-    date:            formData.get('date') as string,
-    start_time:      formData.get('start_time') as string,
-    end_time:        formData.get('end_time') as string,
+    client_email:    (formData.get('client_email') as string)?.trim() || null,
+    date,
+    start_time:      startTime,
+    end_time:        endTime,
     status:          'pendente',
     payment_method:  'presencial',
     payment_status:  'pendente',

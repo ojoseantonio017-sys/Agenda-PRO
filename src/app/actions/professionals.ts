@@ -41,16 +41,20 @@ export async function createProfessional(formData: FormData) {
 
   const workingHours = []
   for (let day = 0; day <= 6; day++) {
-    const start = formData.get(`start_${day}`) as string
-    const end = formData.get(`end_${day}`) as string
-    if (start && end && start < end) {
-      workingHours.push({
-        professional_id: professional.id,
-        day_of_week: day,
-        start_time: start,
-        end_time: end,
-        active: true,
-      })
+    const start = (formData.get(`start_${day}`) as string)?.trim()
+    const end   = (formData.get(`end_${day}`) as string)?.trim()
+    if (start && end) {
+      const [sH, sM] = start.split(':').map(Number)
+      const [eH, eM] = end.split(':').map(Number)
+      if (!isNaN(sH) && !isNaN(sM) && !isNaN(eH) && !isNaN(eM) && (sH * 60 + sM) < (eH * 60 + eM)) {
+        workingHours.push({
+          professional_id: professional.id,
+          day_of_week: day,
+          start_time: start,
+          end_time: end,
+          active: true,
+        })
+      }
     }
   }
 
@@ -94,8 +98,12 @@ export async function updateProfessional(id: string, formData: FormData) {
   for (let day = 0; day <= 6; day++) {
     const start = (formData.get(`start_${day}`) as string)?.trim()
     const end   = (formData.get(`end_${day}`) as string)?.trim()
-    if (start && end && start < end) {
-      newHours.push({ professional_id: id, day_of_week: day, start_time: start, end_time: end, active: true })
+    if (start && end) {
+      const [sH, sM] = start.split(':').map(Number)
+      const [eH, eM] = end.split(':').map(Number)
+      if (!isNaN(sH) && !isNaN(sM) && !isNaN(eH) && !isNaN(eM) && (sH * 60 + sM) < (eH * 60 + eM)) {
+        newHours.push({ professional_id: id, day_of_week: day, start_time: start, end_time: end, active: true })
+      }
     }
   }
   if (newHours.length > 0) {

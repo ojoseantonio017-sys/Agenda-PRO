@@ -61,8 +61,8 @@ export default async function EditarProfissionalPage({ params }: { params: Promi
               <input type="text" name="name" defaultValue={prof.name} required className="input" />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'hsl(215,20%,62%)', marginBottom: '0.4rem' }}>Bio / Especialidade</label>
-              <input type="text" name="bio" defaultValue={prof.bio ?? ''} className="input" placeholder="Especialista em coloração" />
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'hsl(215,20%,62%)', marginBottom: '0.4rem' }}>Especialidade (opcional)</label>
+              <input type="text" name="bio" defaultValue={prof.bio ?? ''} className="input" placeholder="Ex: Coloração, corte, escova" />
             </div>
             <div>
               <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'hsl(215,20%,62%)', marginBottom: '0.4rem' }}>URL da foto</label>

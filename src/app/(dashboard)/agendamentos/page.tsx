@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createServiceRoleClient } from '@/lib/supabase/service'
 import { updateAppointmentStatus } from '@/app/actions/appointments'
 import { CalendarCheck, Clock, CheckCircle2, Calendar } from 'lucide-react'
+import StatusButton from '../components/status-button'
 
 const statusConfig: Record<string, { bg: string; color: string; label: string }> = {
   pendente:  { bg: 'rgba(245,158,11,0.12)',  color: '#f59e0b', label: 'Pendente'  },
@@ -190,25 +191,28 @@ export default async function AgendamentosPage({
                     <td style={{ padding: '0.875rem 1rem' }}>
                       <div style={{ display: 'flex', gap: '0.375rem', flexWrap: 'wrap' }}>
                         {apt.status === 'pendente' && (
-                          <form action={updateAppointmentStatus.bind(null, apt.id, 'confirmado')}>
-                            <button type="submit" style={{ fontSize: 11, fontWeight: 700, padding: '0.3rem 0.625rem', borderRadius: 6, border: 'none', background: 'rgba(34,197,94,0.12)', color: '#22c55e', cursor: 'pointer', whiteSpace: 'nowrap' }}>
-                              Confirmar
-                            </button>
-                          </form>
+                          <StatusButton
+                            action={updateAppointmentStatus.bind(null, apt.id, 'confirmado')}
+                            label="Confirmar"
+                            confirmMessage="Confirmar este agendamento?"
+                            style={{ fontSize: 11, fontWeight: 700, padding: '0.3rem 0.625rem', borderRadius: 6, border: 'none', background: 'rgba(34,197,94,0.12)', color: '#22c55e', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                          />
                         )}
                         {(apt.status === 'pendente' || apt.status === 'confirmado') && (
-                          <form action={updateAppointmentStatus.bind(null, apt.id, 'concluido')}>
-                            <button type="submit" style={{ fontSize: 11, fontWeight: 700, padding: '0.3rem 0.625rem', borderRadius: 6, border: 'none', background: 'rgba(107,114,128,0.12)', color: '#9ca3af', cursor: 'pointer', whiteSpace: 'nowrap' }}>
-                              Concluir
-                            </button>
-                          </form>
+                          <StatusButton
+                            action={updateAppointmentStatus.bind(null, apt.id, 'concluido')}
+                            label="Concluir"
+                            confirmMessage="Marcar como concluído? O pagamento será registrado como pago."
+                            style={{ fontSize: 11, fontWeight: 700, padding: '0.3rem 0.625rem', borderRadius: 6, border: 'none', background: 'rgba(107,114,128,0.12)', color: '#9ca3af', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                          />
                         )}
                         {apt.status !== 'cancelado' && apt.status !== 'concluido' && (
-                          <form action={updateAppointmentStatus.bind(null, apt.id, 'cancelado')}>
-                            <button type="submit" style={{ fontSize: 11, fontWeight: 700, padding: '0.3rem 0.625rem', borderRadius: 6, border: 'none', background: 'rgba(239,68,68,0.12)', color: '#ef4444', cursor: 'pointer', whiteSpace: 'nowrap' }}>
-                              Cancelar
-                            </button>
-                          </form>
+                          <StatusButton
+                            action={updateAppointmentStatus.bind(null, apt.id, 'cancelado')}
+                            label="Cancelar"
+                            confirmMessage="Cancelar este agendamento? Esta ação não pode ser desfeita."
+                            style={{ fontSize: 11, fontWeight: 700, padding: '0.3rem 0.625rem', borderRadius: 6, border: 'none', background: 'rgba(239,68,68,0.12)', color: '#ef4444', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                          />
                         )}
                       </div>
                     </td>
