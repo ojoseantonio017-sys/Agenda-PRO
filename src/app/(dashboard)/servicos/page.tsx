@@ -1,10 +1,12 @@
 import { createClient } from '@/lib/supabase/server'
+import { createServiceRoleClient } from '@/lib/supabase/service'
 import { createService, toggleService, deleteService } from '@/app/actions/services'
 import { Plus, Clock, DollarSign, Scissors, Pencil } from 'lucide-react'
 
 export default async function ServicosPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const authClient = await createClient()
+  const { data: { user } } = await authClient.auth.getUser()
+  const supabase = createServiceRoleClient()
   const { data: userData } = await supabase.from('users').select('company_id').eq('id', user?.id ?? '').single()
   const companyId = userData?.company_id
 

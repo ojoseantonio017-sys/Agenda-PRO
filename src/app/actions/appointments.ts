@@ -57,12 +57,19 @@ export async function createAppointment(formData: FormData) {
 }
 
 export async function updateAppointmentStatus(id: string, status: string) {
-  const supabase = await createClient()
+  const authClient = await createClient()
+  const { data: { user } } = await authClient.auth.getUser()
+  if (!user) throw new Error('Não autenticado')
+
+  const supabase = createServiceRoleClient()
+  const { data: userData } = await supabase.from('users').select('company_id').eq('id', user.id).single()
+  if (!userData?.company_id) throw new Error('Empresa não encontrada')
 
   const { error } = await supabase
     .from('appointments')
     .update({ status })
     .eq('id', id)
+    .eq('company_id', userData.company_id)
 
   if (error) {
     throw new Error(`Erro ao atualizar status: ${error.message}`)

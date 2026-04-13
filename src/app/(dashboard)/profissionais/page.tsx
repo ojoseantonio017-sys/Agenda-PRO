@@ -1,12 +1,14 @@
 import { createClient } from '@/lib/supabase/server'
+import { createServiceRoleClient } from '@/lib/supabase/service'
 import { createProfessional, toggleProfessional, deleteProfessional } from '@/app/actions/professionals'
 import { Plus, UserCircle, Clock, Pencil } from 'lucide-react'
 
 const daysOfWeek = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
 
 export default async function ProfissionaisPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const authClient = await createClient()
+  const { data: { user } } = await authClient.auth.getUser()
+  const supabase = createServiceRoleClient()
   const { data: userData } = await supabase.from('users').select('company_id').eq('id', user?.id ?? '').single()
   const companyId = userData?.company_id
 

@@ -258,7 +258,8 @@ export default function BookingFlow({ company, services, professionals }: Bookin
           for (let i = 0; i < 14; i++) {
             const d = new Date()
             d.setDate(d.getDate() + i)
-            const iso = d.toISOString().split('T')[0]
+            // Usar data local (evita bug de timezone UTC vs Brasil)
+            const iso = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
             const dow = d.getDay()
             const wh  = (selectedProfessional?.working_hours ?? []).find(
               (h) => h.day_of_week === dow && h.active

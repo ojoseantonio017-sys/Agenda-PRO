@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { createServiceRoleClient } from '@/lib/supabase/service'
 import { CalendarCheck, TrendingUp, DollarSign, Users } from 'lucide-react'
 
 function StatCard({ title, value, icon: Icon, color }: { title: string; value: string | number; icon: React.ComponentType<{ size?: number; color?: string }>; color: string }) {
@@ -32,8 +33,11 @@ const statusLabels: Record<string, string> = {
 const DAY_LABELS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
 
 export default async function DashboardPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const authClient = await createClient()
+  const { data: { user } } = await authClient.auth.getUser()
+
+  // Service role para evitar bloqueio de RLS
+  const supabase = createServiceRoleClient()
 
   // Get user's company
   const { data: userData } = await supabase
@@ -109,7 +113,7 @@ export default async function DashboardPage() {
 
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-        <StatCard title="Agendamentos hoje" value={todayCount ?? 0} icon={CalendarCheck} color="#FF7820" />
+        <StatCard title="Agendamentos hoje" value={todayCount ?? 0} icon={CalendarCheck} color="hsl(258,85%,65%)" />
         <StatCard title="Esta semana" value={weekCount ?? 0} icon={TrendingUp} color="#22c55e" />
         <StatCard title="Receita do mês" value={`R$ ${(monthRevenue / 100).toFixed(0)}`} icon={DollarSign} color="#3b82f6" />
         <StatCard title="Total de clientes" value={clientCount ?? 0} icon={Users} color="#a855f7" />
